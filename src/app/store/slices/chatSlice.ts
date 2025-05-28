@@ -26,13 +26,6 @@ const chatSlice = createSlice({
       }
     },
 
-    clearSelectedUsers(state) {
-      state.selectedUsers = [];
-      state.activeChatUser = null;
-      state.activeChat = null;
-      state.messages = [];
-    },
-
     setActiveChatUser(state, action: PayloadAction<User | null>) {
       state.activeChatUser = action.payload;
     },
@@ -62,7 +55,6 @@ const chatSlice = createSlice({
 
 export const { 
   setSelectedUsers, 
-  clearSelectedUsers, 
   setActiveChatUser, 
   setActiveChat, 
   addMessage,
