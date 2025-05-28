@@ -2,13 +2,22 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-    console.log("middleware running ------------------");
+    console.log("-------------------- middleware running ------------------");
     const path = request.nextUrl.pathname
 
     const isPublicPath = path === '/login' || path === '/signup'
 
     const token = request.cookies.get('token')?.value || ''
     console.log("token: ", token);
+
+    console.log({
+        path,
+        isPublicPath,
+        token: token || "No token",
+        cookies: request.cookies.getAll(),
+        url: request.url,
+        headers: Object.fromEntries(request.headers.entries()),
+    });
 
     if (isPublicPath && token) {
         console.log("redirecting to home");
