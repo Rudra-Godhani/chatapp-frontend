@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/app/store/store";
+import store, { AppDispatch, RootState } from "@/app/store/store";
 import { useEffect, useState, useRef } from "react";
 import { addMessage } from "@/app/store/slices/chatSlice";
 import { socket } from "../../../socket";
@@ -50,7 +50,13 @@ const ChatWindow = () => {
         }
 
         socket.on("receiveMessage", (newMessage) => {
+
             dispatch(addMessage(newMessage));
+            const updatedState = store.getState() as RootState;
+            const updatedMessages = updatedState.chat.messages;
+            if (user?.id && updatedMessages.length === 1) {
+                dispatch(getUserChats(user.id));
+            }
         });
 
         return () => {
@@ -71,8 +77,7 @@ const ChatWindow = () => {
         setMessage("");
         setShowEmojiPicker(false);
 
-        // Update chat list to show the chat in sidebar
-        if (user.id) {
+        if (user?.id && messages.length === 0) {
             dispatch(getUserChats(user.id));
         }
     };
@@ -381,6 +386,7 @@ const ChatWindow = () => {
                         width="100%"
                         height="100%"
                         onEmojiClick={onEmojiClick}
+                        reactionsDefaultOpen={false}
                     />
                 </Box>
             )}

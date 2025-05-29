@@ -45,7 +45,8 @@ const NewChatModal = ({ open, onClose, onLoadingChange }: NewChatModalProps) => 
             await dispatch(startChat(user.id, selectedUser.id));
             const newChat = chats.find(
                 (chat) =>
-                    chat.user1.id === selectedUser.id || chat.user2.id === selectedUser.id
+                    (chat.user1.id === selectedUser.id || chat.user2.id === selectedUser.id) &&
+                    (!chat.messages || chat.messages.length === 0) // Ensure chat is new or empty
             );
 
             if (newChat) {
@@ -59,18 +60,16 @@ const NewChatModal = ({ open, onClose, onLoadingChange }: NewChatModalProps) => 
         }
     };
 
-    let filteredUsers = users?.filter((u) => {
+    // Filter users who do not have chats with messages
+    const filteredUsers = users?.filter((u) => {
         if (u.id === user?.id) return false;
         const existingChat = chats?.find(
             (chat) =>
                 (chat.user1.id === u.id || chat.user2.id === u.id) &&
-                chat.messages &&
-                chat.messages.length > 0
+                chat.messages && chat.messages.length > 0
         );
-        return !existingChat;
-    });
-
-    filteredUsers = filteredUsers?.filter(
+        return !existingChat; // Only include users without chats with messages
+    }).filter(
         (u) =>
             u.username.toLowerCase().includes(search.toLowerCase()) ||
             u.email.toLowerCase().includes(search.toLowerCase())
@@ -153,13 +152,13 @@ const NewChatModal = ({ open, onClose, onLoadingChange }: NewChatModalProps) => 
                 />
 
                 <Box sx={{ maxHeight: "300px", overflowY: "auto" }}>
-                    {
-                        filteredUsers.length === 0 && (
-                            <Typography sx={{ color: "#FFFFFF", textAlign:"center", fontSize: { xs: "14px", sm: "16px" } }}>
-                                No users found
-                            </Typography>
-                        )
-                    }
+                    {filteredUsers.length === 0 && (
+                        <Typography
+                            sx={{ color: "#FFFFFF", textAlign: "center", fontSize: { xs: "14px", sm: "16px" } }}
+                        >
+                            No users found
+                        </Typography>
+                    )}
                     <List>
                         {filteredUsers?.map((user, index) => (
                             <React.Fragment key={index}>

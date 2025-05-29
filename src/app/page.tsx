@@ -22,9 +22,14 @@ export default function Home() {
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
     useEffect(() => {
+        // Fetch users and current user once on mount
         dispatch(getAllUsers());
         dispatch(getUser());
+    }, [dispatch]);
+
+    useEffect(() => {
         if (user?.id) {
+            // Fetch chats only when user ID is available
             dispatch(getUserChats(user.id));
         }
     }, [user?.id, dispatch]);
@@ -35,7 +40,7 @@ export default function Home() {
         }
 
         socket.on("userStatus", ({ userId, online }) => {
-            dispatch(updateUserStatus(userId, online));
+            dispatch(updateUserStatus( userId, online ));
         });
 
         return () => {
@@ -57,7 +62,7 @@ export default function Home() {
                         open={drawerOpen}
                         onClose={toggleDrawer}
                         sx={{
-                            '& .MuiDrawer-paper': {
+                            "& .MuiDrawer-paper": {
                                 width: { xs: 300, sm: 400 },
                                 backgroundColor: "#111322",
                                 color: "#FFFFFF",
@@ -73,10 +78,10 @@ export default function Home() {
                         sx={{
                             width: DRAWER_WIDTH,
                             flexShrink: 0,
-                            position: 'fixed',
+                            position: "fixed",
                             top: 0,
                             left: 0,
-                            height: '100vh',
+                            height: "100vh",
                             zIndex: 1100,
                         }}
                     >
@@ -87,10 +92,10 @@ export default function Home() {
                     component="main"
                     sx={{
                         flexGrow: 1,
-                        width: { xs: '100%', md: `calc(100% - ${DRAWER_WIDTH}px)` },
+                        width: { xs: "100%", md: `calc(100% - ${DRAWER_WIDTH}px)` },
                         ml: { xs: 0, md: `${DRAWER_WIDTH}px` },
                         pt: { xs: "56px", sm: "64px", md: "72px" },
-                        transition: theme.transitions.create(['margin', 'width'], {
+                        transition: theme.transitions.create(["margin", "width"], {
                             easing: theme.transitions.easing.sharp,
                             duration: theme.transitions.duration.leavingScreen,
                         }),
