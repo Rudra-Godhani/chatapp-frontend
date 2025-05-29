@@ -29,6 +29,7 @@ const ChatWindow = () => {
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const textFieldRef = useRef<HTMLInputElement>(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const emojiPickerRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = (smooth = false) => {
         if (messagesContainerRef.current) {
@@ -62,7 +63,20 @@ const ChatWindow = () => {
         return () => {
             socket.off("receiveMessage");
         };
-    }, [activeChat?.id, dispatch]);
+    }, [activeChat?.id, dispatch,user?.id]);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node)) {
+                setShowEmojiPicker(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     const handleSendMessage = async () => {
         if (!message.trim() || !activeChat || !user) return;
@@ -224,6 +238,7 @@ const ChatWindow = () => {
                                             : "#373546",
                                     px: { xs: 1.5, sm: 2 },
                                     py: 1,
+                                    position: "relative",
                                     borderRadius:
                                         msg.sender.id === user?.id
                                             ? "16px 0px 16px 16px"
@@ -361,6 +376,7 @@ const ChatWindow = () => {
             </Box>
             {showEmojiPicker && (
                 <Box
+                    ref={emojiPickerRef}
                     sx={{
                         position: "absolute",
                         bottom: {
@@ -386,7 +402,6 @@ const ChatWindow = () => {
                         width="100%"
                         height="100%"
                         onEmojiClick={onEmojiClick}
-                        reactionsDefaultOpen={false}
                     />
                 </Box>
             )}

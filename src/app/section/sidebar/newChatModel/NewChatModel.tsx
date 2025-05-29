@@ -68,7 +68,7 @@ const NewChatModal = ({ open, onClose, onLoadingChange }: NewChatModalProps) => 
                 (chat.user1.id === u.id || chat.user2.id === u.id) &&
                 chat.messages && chat.messages.length > 0
         );
-        return !existingChat; // Only include users without chats with messages
+        return !existingChat;
     }).filter(
         (u) =>
             u.username.toLowerCase().includes(search.toLowerCase()) ||

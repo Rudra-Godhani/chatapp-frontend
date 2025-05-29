@@ -1,35 +1,31 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+// import { NextResponse } from 'next/server'
+// import type { NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest) {
-    console.log("-------------------- middleware running ------------------");
-    const path = request.nextUrl.pathname
+export function middleware() {
+    // const path = request.nextUrl.pathname
 
-    const isPublicPath = path === '/login' || path === '/signup'
+    // const isPublicPath = path === '/login' || path === '/signup'
 
-    const token = request.cookies.get('token')?.value || ''
-    console.log("request cookies: ", request.cookies);
-    console.log("request cookies: ", request.cookies.getAll());
-    console.log("token: ", token);
+    // const token = request.cookies.get('token')?.value || '';
 
-    // console.log({
-    //     path,
-    //     isPublicPath,
-    //     token: token || "No token",
-    //     cookies: request.cookies.getAll(),
-    //     url: request.url,
-    //     headers: Object.fromEntries(request.headers.entries()),
-    // });
+    // // console.log({
+    // //     path,
+    // //     isPublicPath,
+    // //     token: token || "No token",
+    // //     cookies: request.cookies.getAll(),
+    // //     url: request.url,
+    // //     headers: Object.fromEntries(request.headers.entries()),
+    // // });
 
-    if (isPublicPath && token) {
-        console.log("redirecting to home");
-        return NextResponse.redirect(new URL('/', request.url))
-    }
+    // if (isPublicPath && token) {
+    //     console.log("redirecting to home");
+    //     return NextResponse.redirect(new URL('/', request.url))
+    // }
 
-    if (!isPublicPath && !token) {
-        console.log("redirecting to login");
-        return NextResponse.redirect(new URL('/login', request.url))
-    }
+    // if (!isPublicPath && !token) {
+    //     console.log("redirecting to login");
+    //     return NextResponse.redirect(new URL('/login', request.url))
+    // }
 }
 
 export const config = {

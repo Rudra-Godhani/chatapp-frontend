@@ -7,29 +7,32 @@ import { getAllUsers, getUser, getUserChats, updateUserStatus } from "./store/sl
 import Navbar from "./components/navbar/Navbar";
 import { Box, Drawer, useMediaQuery, useTheme } from "@mui/material";
 import Sidebar from "./section/sidebar/Sidebar";
-import ChatWindow from "./section/chatWindow/page";
-import ChatWelcome from "./section/chatWelcome/page";
 import { socket } from "@/socket";
+import { useRouter } from "next/navigation";
+import ChatWindow from "./section/chatWindow/ChatWindow";
+import ChatWelcome from "./section/chatWelcome/ChatWelcome";
 
 const DRAWER_WIDTH = 400;
 
 export default function Home() {
     const dispatch = useDispatch<AppDispatch>();
-    const { user } = useSelector((state: RootState) => state.user);
+    const { user, isAuthenticated } = useSelector((state: RootState) => state.user);
     const { activeChat } = useSelector((state: RootState) => state.chat);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const theme = useTheme();
+    const router = useRouter();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
     useEffect(() => {
-        // Fetch users and current user once on mount
-        dispatch(getAllUsers());
-        dispatch(getUser());
-    }, [dispatch]);
+        if (!isAuthenticated) {
+            router.push("/login");
+        }
+    }, [dispatch, isAuthenticated, router]);
 
     useEffect(() => {
+        dispatch(getAllUsers());
+        dispatch(getUser());
         if (user?.id) {
-            // Fetch chats only when user ID is available
             dispatch(getUserChats(user.id));
         }
     }, [user?.id, dispatch]);
@@ -40,7 +43,7 @@ export default function Home() {
         }
 
         socket.on("userStatus", ({ userId, online }) => {
-            dispatch(updateUserStatus( userId, online ));
+            dispatch(updateUserStatus(userId, online));
         });
 
         return () => {

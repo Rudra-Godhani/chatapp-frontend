@@ -18,7 +18,7 @@ interface FormData {
 export default function Login() {
     const dispatch = useDispatch<AppDispatch>();
     const router = useRouter();
-    const { loading, error, message } = useSelector((state: RootState) => state.user);
+    const { loading, error, message, isAuthenticated } = useSelector((state: RootState) => state.user);
     const {
         register,
         handleSubmit,
@@ -34,12 +34,14 @@ export default function Login() {
         if (error) {
             toast.error(error);
         }
-        if (message) {
-            toast.success(message);
+        if (isAuthenticated) {
+            if (message) {
+                toast.success(message);
+            }
             router.push("/");
         }
         dispatch(clearAllUserErrorsAndMessages());
-    }, [error, message, dispatch, router]);
+    }, [error, message, dispatch, router,isAuthenticated]);
 
     return (
         <Box
