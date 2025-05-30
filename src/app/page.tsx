@@ -16,11 +16,10 @@ const DRAWER_WIDTH = 400;
 
 export default function Home() {
     const dispatch = useDispatch<AppDispatch>();
-    const { user, isAuthenticated } = useSelector((state: RootState) => state.user);
+    const { user } = useSelector((state: RootState) => state.user);
     const { activeChat } = useSelector((state: RootState) => state.chat);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const theme = useTheme();
-    const router = useRouter();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
     // useEffect(() => {
