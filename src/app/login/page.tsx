@@ -169,7 +169,7 @@ export default function Login() {
                         align="center"
                         sx={{ color: "#b0b0b0" }}
                     >
-                        Don't have an account?{" "}
+                        Don’t have an account?{" "}
                         <Link
                             href="/signup"
                             className="text-[#8b6bff] decoration-none"
