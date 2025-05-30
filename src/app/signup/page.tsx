@@ -29,10 +29,9 @@ export default function Signup() {
     } = useForm<FormData>();
 
     const onSubmit = async (data: FormData) => {
-        console.log(data);
         dispatch(registerUser(data));
     };
-    
+
     useEffect(() => {
         if (error) {
             toast.error(error);
@@ -41,9 +40,9 @@ export default function Signup() {
             toast.success(message);
             router.push("/login");
         }
-        if(isAuthenticated){
-            router.push("/");
-        }
+        // if(isAuthenticated){
+        //     router.push("/");
+        // }
         dispatch(clearAllUserErrorsAndMessages());
     }, [dispatch, error, loading, isAuthenticated, message, router]);
 
@@ -87,7 +86,7 @@ export default function Signup() {
                     <TextField
                         fullWidth
                         label="Username"
-                        {...register("username", {required: "Username is required"})}
+                        {...register("username", { required: "Username is required" })}
                         sx={{
                             mb: "1rem",
                             "& .MuiInputBase-root": {
@@ -106,14 +105,14 @@ export default function Signup() {
                         }}
                     />
                     {errors.username && (
-                            <span className="text-red-500 text-sm mb-3 block">
-                                {errors.username.message}
-                            </span>
-                        )}
+                        <span className="text-red-500 text-sm mb-3 block">
+                            {errors.username.message}
+                        </span>
+                    )}
                     <TextField
                         fullWidth
                         label="Email"
-                        {...register("email", {required: "Email is required"})}
+                        {...register("email", { required: "Email is required" })}
                         sx={{
                             mb: "1rem",
                             "& .MuiInputBase-root": {
@@ -132,15 +131,15 @@ export default function Signup() {
                         }}
                     />
                     {errors.email && (
-                            <span className="text-red-500 text-sm mb-3 block">
-                                {errors.email.message}
-                            </span>
-                        )}
+                        <span className="text-red-500 text-sm mb-3 block">
+                            {errors.email.message}
+                        </span>
+                    )}
                     <TextField
                         fullWidth
                         label="Password"
                         type="password"
-                        {...register("password", {required: "Password is required"})}
+                        {...register("password", { required: "Password is required" })}
                         sx={{
                             mb: "1rem",
                             "& .MuiInputBase-root": {
@@ -158,11 +157,11 @@ export default function Signup() {
                             },
                         }}
                     />
-                     {errors.password && (
-                            <span className="text-red-500 text-sm mb-3 block">
-                                {errors.password.message}
-                            </span>
-                        )}
+                    {errors.password && (
+                        <span className="text-red-500 text-sm mb-3 block">
+                            {errors.password.message}
+                        </span>
+                    )}
                     <Box sx={{ textAlign: "right", mb: 2 }}>
                         <Link
                             href="#"
@@ -184,15 +183,15 @@ export default function Signup() {
                         onClick={handleSubmit(onSubmit)}
                     >
                         {loading ? (
-                                <CircularProgress
-                                    size={24}
-                                    sx={{
-                                        color: "#FFFFFF",
-                                    }}
-                                />
-                            ) : (
-                                "Create Account"
-                            )}
+                            <CircularProgress
+                                size={24}
+                                sx={{
+                                    color: "#FFFFFF",
+                                }}
+                            />
+                        ) : (
+                            "Create Account"
+                        )}
                     </Button>
                     <Typography
                         variant="body2"

@@ -3,7 +3,7 @@ import axios, { AxiosError } from "axios";
 import { AppDispatch } from "../store";
 import { Chat, User } from "@/app/type/type";
 import { BASE_URL } from "@/app/constants/const";
-import { resetChatState } from "./chatSlice";
+import { resetChatState, updateActiveChatUserStatus } from "./chatSlice";
 
 // Define response types for each API call
 type RegisterResponse = { user: User; message: string };
@@ -322,6 +322,7 @@ export const getUser = () => async (dispatch: AppDispatch) => {
 export const updateUserStatus =
     (userId: string, online: boolean) => (dispatch: AppDispatch) => {
         dispatch(userSlice.actions.updateUserStatus({ userId, online }));
+        dispatch(updateActiveChatUserStatus({ userId, online }));
     };
 
 export const logout = () => async (dispatch: AppDispatch) => {

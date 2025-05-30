@@ -47,6 +47,27 @@ const chatSlice = createSlice({
       state.messages.push(action.payload);
     },
 
+    updateActiveChatUserStatus: (state, action: PayloadAction<{ userId: string; online: boolean }>) => {
+      if (state.activeChatUser?.id === action.payload.userId) {
+        state.activeChatUser = { ...state.activeChatUser, online: action.payload.online };
+      }
+      
+      // Update status in activeChat if it exists
+      if (state.activeChat) {
+        if (state.activeChat.user1.id === action.payload.userId) {
+          state.activeChat = {
+            ...state.activeChat,
+            user1: { ...state.activeChat.user1, online: action.payload.online }
+          };
+        } else if (state.activeChat.user2.id === action.payload.userId) {
+          state.activeChat = {
+            ...state.activeChat,
+            user2: { ...state.activeChat.user2, online: action.payload.online }
+          };
+        }
+      }
+    },
+
     resetChatState: () => {
       return initialState;
     },
@@ -58,6 +79,7 @@ export const {
   setActiveChatUser, 
   setActiveChat, 
   addMessage,
+  updateActiveChatUserStatus,
   resetChatState 
 } = chatSlice.actions;
 

@@ -151,7 +151,8 @@ const NewChatModal = ({ open, onClose, onLoadingChange }: NewChatModalProps) => 
                     }}
                 />
 
-                <Box sx={{ maxHeight: "300px", overflowY: "auto" }}>
+                <Box sx={{ maxHeight: "300px", overflowY: "auto", scrollbarWidth: "thin",
+                    scrollbarColor: "#A07ACD #0F101A", }}>
                     {filteredUsers.length === 0 && (
                         <Typography
                             sx={{ color: "#FFFFFF", textAlign: "center", fontSize: { xs: "14px", sm: "16px" } }}

@@ -26,7 +26,6 @@ export default function Login() {
     } = useForm<FormData>();
 
     const onSubmit = async (data: FormData) => {
-        console.log(data);
         dispatch(login(data));
     };
 
@@ -34,14 +33,14 @@ export default function Login() {
         if (error) {
             toast.error(error);
         }
-        if (isAuthenticated) {
-            if (message) {
-                toast.success(message);
-            }
-            router.push("/");
+        // if (isAuthenticated) {
+        if (message) {
+            toast.success(message);
         }
+        // router.push("/");
+        // }
         dispatch(clearAllUserErrorsAndMessages());
-    }, [error, message, dispatch, router,isAuthenticated]);
+    }, [error, message, dispatch, router, isAuthenticated]);
 
     return (
         <Box

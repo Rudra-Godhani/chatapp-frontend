@@ -15,7 +15,7 @@ import store, { AppDispatch, RootState } from "@/app/store/store";
 import { useEffect, useState, useRef } from "react";
 import { addMessage } from "@/app/store/slices/chatSlice";
 import { socket } from "../../../socket";
-import EmojiPicker from "emoji-picker-react";
+import EmojiPicker, { Theme } from "emoji-picker-react";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
 import { getUserChats } from "@/app/store/slices/userSlice";
 
@@ -401,6 +401,7 @@ const ChatWindow = () => {
                     <EmojiPicker
                         width="100%"
                         height="100%"
+                        theme={Theme.DARK}
                         onEmojiClick={onEmojiClick}
                     />
                 </Box>

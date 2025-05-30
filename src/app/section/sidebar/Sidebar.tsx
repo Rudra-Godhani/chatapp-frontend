@@ -32,7 +32,7 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
     const [openModal, setOpenModal] = useState(false);
     const [search, setSearch] = useState("");
     const dispatch = useDispatch<AppDispatch>();
-    const { users, chats, user, loading } = useSelector((state: RootState) => state.user);
+    const { users, chats, user } = useSelector((state: RootState) => state.user);
     const { activeChat } = useSelector((state: RootState) => state.chat);
     const [isNewChatLoading, setIsNewChatLoading] = useState(false);
 
@@ -171,7 +171,7 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
                     },
                 }}
             >
-                {loading ||isNewChatLoading ? (
+                {isNewChatLoading ? (
                     <Box
                         sx={{
                             display: "flex",

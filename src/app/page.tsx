@@ -23,11 +23,12 @@ export default function Home() {
     const router = useRouter();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-    useEffect(() => {
-        if (!isAuthenticated) {
-            router.push("/login");
-        }
-    }, [dispatch, isAuthenticated, router]);
+    // useEffect(() => {
+    //     if (!isAuthenticated) {
+    //         console.log("User is not authenticated, redirecting to login page.");
+    //         router.push("/login");
+    //     }
+    // }, [dispatch, isAuthenticated, router]);
 
     useEffect(() => {
         dispatch(getAllUsers());
@@ -45,7 +46,7 @@ export default function Home() {
         socket.on("userStatus", ({ userId, online }) => {
             dispatch(updateUserStatus(userId, online));
         });
-
+        
         return () => {
             socket.off("userStatus");
         };
