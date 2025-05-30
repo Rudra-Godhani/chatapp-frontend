@@ -8,7 +8,6 @@ import Navbar from "./components/navbar/Navbar";
 import { Box, Drawer, useMediaQuery, useTheme } from "@mui/material";
 import Sidebar from "./section/sidebar/Sidebar";
 import { socket } from "@/socket";
-import { useRouter } from "next/navigation";
 import ChatWindow from "./section/chatWindow/ChatWindow";
 import ChatWelcome from "./section/chatWelcome/ChatWelcome";
 
