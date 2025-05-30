@@ -40,9 +40,9 @@ export default function Signup() {
             toast.success(message);
             router.push("/login");
         }
-        // if(isAuthenticated){
-        //     router.push("/");
-        // }
+        if(isAuthenticated){
+            router.push("/");
+        }
         dispatch(clearAllUserErrorsAndMessages());
     }, [dispatch, error, loading, isAuthenticated, message, router]);
 

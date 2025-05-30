@@ -10,6 +10,7 @@ import Sidebar from "./section/sidebar/Sidebar";
 import { socket } from "@/socket";
 import ChatWindow from "./section/chatWindow/ChatWindow";
 import ChatWelcome from "./section/chatWelcome/ChatWelcome";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const DRAWER_WIDTH = 400;
 
@@ -20,13 +21,6 @@ export default function Home() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
-    // useEffect(() => {
-    //     if (!isAuthenticated) {
-    //         console.log("User is not authenticated, redirecting to login page.");
-    //         router.push("/login");
-    //     }
-    // }, [dispatch, isAuthenticated, router]);
 
     useEffect(() => {
         dispatch(getAllUsers());
@@ -55,7 +49,7 @@ export default function Home() {
     };
 
     return (
-        <>
+        <ProtectedRoute>
             <Navbar toggleDrawer={toggleDrawer} />
             <Box sx={{ display: "flex", height: "100vh" }}>
                 {isMobile ? (
@@ -106,6 +100,6 @@ export default function Home() {
                     {activeChat ? <ChatWindow /> : <ChatWelcome />}
                 </Box>
             </Box>
-        </>
+        </ProtectedRoute>
     );
 }

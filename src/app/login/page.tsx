@@ -33,12 +33,12 @@ export default function Login() {
         if (error) {
             toast.error(error);
         }
-        // if (isAuthenticated) {
-        if (message) {
-            toast.success(message);
+        if (isAuthenticated) {
+            if (message) {
+                toast.success(message);
+            }
+            router.push('/');
         }
-        // router.push("/");
-        // }
         dispatch(clearAllUserErrorsAndMessages());
     }, [error, message, dispatch, router, isAuthenticated]);
 
@@ -151,6 +151,7 @@ export default function Login() {
                             "&:hover": { backgroundColor: "#9271CD" },
                         }}
                         onClick={handleSubmit(onSubmit)}
+                        disabled={loading}
                     >
                         {loading ? (
                             <CircularProgress
@@ -168,7 +169,7 @@ export default function Login() {
                         align="center"
                         sx={{ color: "#b0b0b0" }}
                     >
-                        Don’t have an account?{" "}
+                        Don't have an account?{" "}
                         <Link
                             href="/signup"
                             className="text-[#8b6bff] decoration-none"
