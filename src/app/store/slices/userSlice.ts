@@ -1,7 +1,7 @@
 import { AnyAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 import { AppDispatch } from "../store";
-import { Chat, User } from "@/app/type/type";
+import { Chat, Message, User } from "@/app/type/type";
 import { BASE_URL } from "@/app/constants/const";
 import { resetChatState, updateActiveChatUserStatus } from "./chatSlice";
 
@@ -135,9 +135,12 @@ const userSlice = createSlice({
             state.isAuthenticated = true;
             state.user = action.payload.user;
         },
-        fetchUserFailed: (state, action: PayloadAction<{
-            message: string
-        }>) => {
+        fetchUserFailed: (
+            state,
+            action: PayloadAction<{
+                message: string;
+            }>
+        ) => {
             state.loading = false;
             state.isAuthenticated = false;
             state.user = null;
@@ -183,6 +186,24 @@ const userSlice = createSlice({
                         ? { ...chat.user2, online: action.payload.online }
                         : chat.user2,
             }));
+        },
+        updateChatMessages: (
+            state,
+            action: PayloadAction<{ chatId: string; message: Message }>
+        ) => {
+            const { chatId, message } = action.payload;
+            const chatIndex = state.chats.findIndex((c) => c.id === chatId);
+            if (chatIndex !== -1) {
+                const chat = state.chats[chatIndex];
+                const existingMessageIndex = chat.messages.findIndex(
+                    (msg) => msg.id === message.id
+                );
+                if (existingMessageIndex !== -1) {
+                    chat.messages[existingMessageIndex] = message;
+                } else {
+                    chat.messages.push(message);
+                }
+            }
         },
         clearAllUserErrorsAndMsgs(state) {
             state.message = null;
@@ -323,6 +344,11 @@ export const updateUserStatus =
     (userId: string, online: boolean) => (dispatch: AppDispatch) => {
         dispatch(userSlice.actions.updateUserStatus({ userId, online }));
         dispatch(updateActiveChatUserStatus({ userId, online }));
+    };
+
+export const updateChatMessages =
+    (chatId: string, message: Message) => (dispatch: AppDispatch) => {
+        dispatch(userSlice.actions.updateChatMessages({ chatId, message }));
     };
 
 export const logout = () => async (dispatch: AppDispatch) => {

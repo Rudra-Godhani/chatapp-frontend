@@ -13,6 +13,7 @@ import {
     Avatar,
     IconButton,
     CircularProgress,
+    Badge,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
@@ -22,6 +23,7 @@ import ChatTabs from "./tabs/Tabs";
 import { User } from "@/app/type/type";
 import NewChatModal from "./newChatModel/NewChatModel";
 import { getUserChats } from "@/app/store/slices/userSlice";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
 
 interface SidebarProps {
     toggleDrawer?: () => void;
@@ -32,7 +34,9 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
     const [openModal, setOpenModal] = useState(false);
     const [search, setSearch] = useState("");
     const dispatch = useDispatch<AppDispatch>();
-    const { users, chats, user } = useSelector((state: RootState) => state.user);
+    const { users, chats, user } = useSelector(
+        (state: RootState) => state.user
+    );
     const { activeChat } = useSelector((state: RootState) => state.chat);
     const [isNewChatLoading, setIsNewChatLoading] = useState(false);
 
@@ -41,7 +45,6 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
 
     const handleSelectUser = async (selectedUser: User) => {
         if (!user?.id) return;
-        // Find the chat between the current user and the selected user
         const chat = chats.find(
             (c) =>
                 (c.user1.id === user.id && c.user2.id === selectedUser.id) ||
@@ -49,7 +52,6 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
         );
         if (chat) {
             dispatch(setActiveChat({ chat, currentUserId: user.id }));
-            // Fetch updated chat messages without refreshing the user list
             await dispatch(getUserChats(user.id));
         }
         if (isMobile && toggleDrawer) {
@@ -57,23 +59,67 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
         }
     };
 
-    // Filter users who have chats with messages
     const usersWithMessages = users.filter((u) => {
         if (u.id === user?.id) return false;
         return chats?.some(
             (chat) =>
                 ((chat.user1.id === u.id && chat.user2.id === user?.id) ||
                     (chat.user1.id === user?.id && chat.user2.id === u.id)) &&
-                chat.messages && chat.messages.length > 0
+                chat.messages &&
+                chat.messages.length > 0
         );
     });
 
-    // Apply search filter
     const filteredUsers = usersWithMessages.filter(
         (u) =>
             u.username.toLowerCase().includes(search.toLowerCase()) ||
             u.email.toLowerCase().includes(search.toLowerCase())
     );
+
+    const formatMessageTimestamp = (createdAt: string | Date | undefined) => {
+        if (!createdAt) return "";
+
+        const messageDate = new Date(createdAt);
+        const localDate = new Date(
+            messageDate.getTime() - messageDate.getTimezoneOffset() * 60000
+        );
+        const currentDate = new Date();
+
+        // Extract date components for comparison
+        const messageYear = localDate.getFullYear();
+        const messageMonth = localDate.getMonth();
+        const messageDay = localDate.getDate();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
+        const currentDay = currentDate.getDate();
+
+        const isToday =
+            messageYear === currentYear &&
+            messageMonth === currentMonth &&
+            messageDay === currentDay;
+
+        const isYesterday =
+            messageYear === currentYear &&
+            messageMonth === currentMonth &&
+            messageDay === currentDay - 1;
+
+        if (isToday) {
+            return localDate.toLocaleTimeString(undefined, {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+            });
+        } else if (isYesterday) {
+            return "Yesterday";
+        } else {
+            return localDate.toLocaleDateString(undefined, {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+            });
+        }
+    };
+
 
     return (
         <Box
@@ -92,9 +138,16 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
             }}
         >
             {isMobile && toggleDrawer && (
-                <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+                <Box
+                    sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}
+                >
                     <IconButton onClick={toggleDrawer}>
-                        <CloseIcon sx={{ color: "#FFFFFF", fontSize: { xs: 24, sm: 24 } }} />
+                        <CloseIcon
+                            sx={{
+                                color: "#FFFFFF",
+                                fontSize: { xs: 24, sm: 24 },
+                            }}
+                        />
                     </IconButton>
                 </Box>
             )}
@@ -112,7 +165,8 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
                                 borderRadius: "8px",
                                 border: "2px solid #1F212F",
                                 color: "#FFFFFF",
-                                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                "&.Mui-focused .MuiOutlinedInput-notchedOutline":
+                                {
                                     borderColor: "#A07ACD",
                                     borderWidth: "2px",
                                 },
@@ -123,7 +177,12 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
-                                    <SearchIcon sx={{ color: "#FFFFFF", fontSize: { xs: 20, sm: 24 } }} />
+                                    <SearchIcon
+                                        sx={{
+                                            color: "#FFFFFF",
+                                            fontSize: { xs: 20, sm: 24 },
+                                        }}
+                                    />
                                 </InputAdornment>
                             ),
                         }}
@@ -189,83 +248,264 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
                     </Box>
                 ) : filteredUsers.length === 0 ? (
                     <Typography
-                        sx={{ color: "#FFFFFF", mt: 2, textAlign: "center", fontSize: { xs: "14px", sm: "16px" } }}
+                        sx={{
+                            color: "#FFFFFF",
+                            mt: 2,
+                            textAlign: "center",
+                            fontSize: { xs: "14px", sm: "16px" },
+                        }}
                     >
                         No users with chats found
                     </Typography>
                 ) : (
                     <Box sx={{ mt: 2 }}>
-                        <Typography sx={{ color: "#FFFFFF", mb: 1, fontSize: { xs: "16px", sm: "18px" } }}>
+                        <Typography
+                            sx={{
+                                color: "#FFFFFF",
+                                mb: 1,
+                                fontSize: { xs: "16px", sm: "18px" },
+                            }}
+                        >
                             Users:
                         </Typography>
-                        {filteredUsers.map((otherUser, index) => (
-                            <Box
-                                key={index}
-                                sx={{
-                                    mt: 1,
-                                    p: 2,
-                                    borderRadius: 2,
-                                    bgcolor:
-                                        activeChat &&
-                                            ((activeChat.user1.id === user?.id && activeChat.user2.id === otherUser.id) ||
-                                                (activeChat.user1.id === otherUser.id && activeChat.user2.id === user?.id))
-                                            ? "#373546"
-                                            : "#1F212F",
-                                    color: "#FFFFFF",
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                    cursor: "pointer",
-                                    "&:hover": {
-                                        bgcolor: "#2A2C3A",
-                                        transition: "all 0.2s ease-in-out",
-                                    },
-                                }}
-                                onClick={() => handleSelectUser(otherUser)}
-                            >
-                                <Box display="flex" gap={2} alignItems="center">
-                                    <Box position="relative">
-                                        {otherUser.online && (
+                        <Typography>{user?.online ? "online" : "offline"}</Typography>
+                        {filteredUsers.map((otherUser, index) => {
+                            const userChat = chats.find(
+                                (c) =>
+                                    (c.user1.id === user?.id &&
+                                        c.user2.id === otherUser.id) ||
+                                    (c.user1.id === otherUser.id &&
+                                        c.user2.id === user?.id)
+                            );
+
+                            const unseenMessageCount =
+                                userChat?.messages.filter(
+                                    (msg) =>
+                                        msg.seen === false &&
+                                        msg.sender.id !== user?.id
+                                ).length || 0;
+
+                            const latestMessage =
+                                userChat?.messages?.[
+                                userChat.messages.length - 1
+                                ];
+                            // const latestMessage = messages[messages.length - 1];
+                            const timestampLabel = formatMessageTimestamp(
+                                latestMessage?.createdAt
+                            );
+
+                            return (
+                                <Box
+                                    key={index}
+                                    sx={{
+                                        mt: 1,
+                                        p: 2,
+                                        borderRadius: 2,
+                                        bgcolor:
+                                            activeChat &&
+                                                ((activeChat.user1.id ===
+                                                    user?.id &&
+                                                    activeChat.user2.id ===
+                                                    otherUser.id) ||
+                                                    (activeChat.user1.id ===
+                                                        otherUser.id &&
+                                                        activeChat.user2.id ===
+                                                        user?.id))
+                                                ? "#373546"
+                                                : "#1F212F",
+                                        color: "#FFFFFF",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        cursor: "pointer",
+                                        "&:hover": {
+                                            bgcolor: "#2A2C3A",
+                                            transition: "all 0.2s ease-in-out",
+                                        },
+                                    }}
+                                    onClick={() => handleSelectUser(otherUser)}
+                                >
+                                    <Box
+                                        display="flex"
+                                        alignItems="center"
+                                        sx={{
+                                            flex: 1,
+                                            overflow: "hidden",
+                                            gap: 2,
+                                        }}
+                                    >
+                                        <Box position="relative">
+                                            {otherUser.online && (
+                                                <Box
+                                                    sx={{
+                                                        position: "absolute",
+                                                        right: 0,
+                                                        bottom: 2,
+                                                        width: "12px",
+                                                        height: "12px",
+                                                        zIndex: 10,
+                                                        backgroundColor:
+                                                            "#00FF00",
+                                                        borderRadius: "50%",
+                                                    }}
+                                                />
+                                            )}
+                                            <Avatar
+                                                sx={{
+                                                    bgcolor: "#FFFFFF",
+                                                    color: "#000000",
+                                                    width: { xs: 40, sm: 45 },
+                                                    height: { xs: 40, sm: 45 },
+                                                }}
+                                            >
+                                                {otherUser.username
+                                                    .charAt(0)
+                                                    .toUpperCase()}
+                                            </Avatar>
+                                        </Box>
+                                        <Box
+                                            sx={{
+                                                flex: 1,
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                overflow: "hidden",
+                                            }}
+                                        >
                                             <Box
                                                 sx={{
-                                                    position: "absolute",
-                                                    right: 0,
-                                                    bottom: 2,
-                                                    width: "12px",
-                                                    height: "12px",
-                                                    zIndex: 10,
-                                                    backgroundColor: "#00FF00",
-                                                    borderRadius: "50%",
+                                                    display: "flex",
+                                                    justifyContent:
+                                                        "space-between",
+                                                    alignItems: "center",
                                                 }}
-                                            />
-                                        )}
-                                        <Avatar
-                                            sx={{
-                                                bgcolor: "#FFFFFF",
-                                                color: "#000000",
-                                                width: { xs: 40, sm: 45 },
-                                                height: { xs: 40, sm: 45 },
-                                            }}
-                                        >
-                                            {otherUser.username.charAt(0).toUpperCase()}
-                                        </Avatar>
-                                    </Box>
-                                    <Box>
-                                        <Typography sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
-                                            {otherUser.username}
-                                        </Typography>
-                                        <Typography
-                                            sx={{
-                                                color: "#B0B3B8",
-                                                fontSize: { xs: "12px", sm: "14px" },
-                                            }}
-                                        >
-                                            {otherUser.email}
-                                        </Typography>
+                                            >
+                                                <Typography
+                                                    sx={{
+                                                        fontSize: {
+                                                            xs: "14px",
+                                                            sm: "16px",
+                                                        },
+                                                        fontWeight: 500,
+                                                    }}
+                                                >
+                                                    {otherUser.username}
+                                                </Typography>
+                                                {timestampLabel && (
+                                                    <Typography
+                                                        sx={{
+                                                            color: "#B0B3B8",
+                                                            fontSize: {
+                                                                xs: "10px",
+                                                                sm: "12px",
+                                                            },
+                                                            textAlign: "right",
+                                                        }}
+                                                    >
+                                                        {timestampLabel}
+                                                    </Typography>
+                                                )}
+                                            </Box>
+                                            <Box
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent:
+                                                        "space-between",
+                                                    alignItems: "center",
+                                                    mt: 0.5,
+                                                }}
+                                            >
+                                                <Box
+                                                    sx={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        gap: "5px",
+                                                        overflow: "hidden",
+                                                        width: "90%",
+                                                    }}
+                                                >
+                                                    {latestMessage?.sender
+                                                        ?.id === user?.id && (
+                                                            <Box>
+                                                                {latestMessage?.seen ? (
+                                                                    <DoneAllIcon
+                                                                        sx={{
+                                                                            fontSize:
+                                                                            {
+                                                                                xs: "12px",
+                                                                                sm: "14px",
+                                                                            },
+                                                                            color: "#4CB4DC",
+                                                                        }}
+                                                                    />
+                                                                ) : (
+                                                                    <DoneAllIcon
+                                                                        sx={{
+                                                                            fontSize:
+                                                                            {
+                                                                                xs: "12px",
+                                                                                sm: "14px",
+                                                                            },
+                                                                            color: "#FFFFFF",
+                                                                        }}
+                                                                    />
+                                                                )}
+                                                            </Box>
+                                                        )}
+                                                    <Typography
+                                                        sx={{
+                                                            color: "#B0B3B8",
+                                                            fontSize: {
+                                                                xs: "12px",
+                                                                sm: "14px",
+                                                            },
+                                                            whiteSpace:
+                                                                "nowrap",
+                                                            overflow: "hidden",
+                                                            textOverflow:
+                                                                "ellipsis",
+                                                        }}
+                                                        title={
+                                                            latestMessage?.content ||
+                                                            "No messages yet"
+                                                        }
+                                                    >
+                                                        {latestMessage?.content ||
+                                                            "No messages yet"}
+                                                    </Typography>
+                                                </Box>
+                                                {unseenMessageCount > 0 && (
+                                                    <Box
+                                                        sx={{
+                                                            pr: "10px",
+                                                        }}
+                                                    >
+                                                        <Badge
+                                                            badgeContent={
+                                                                unseenMessageCount
+                                                            }
+                                                            sx={{
+                                                                "& .MuiBadge-badge":
+                                                                {
+                                                                    backgroundColor:
+                                                                        "#1DAA61",
+                                                                    color: "#000000",
+                                                                    fontSize:
+                                                                        "10px",
+                                                                    minWidth:
+                                                                        "18px",
+                                                                    height: "18px",
+                                                                    borderRadius:
+                                                                        "50%",
+                                                                },
+                                                            }}
+                                                        />
+                                                    </Box>
+                                                )}
+                                            </Box>
+                                        </Box>
                                     </Box>
                                 </Box>
-                            </Box>
-                        ))}
+                            );
+                        })}
                     </Box>
                 )}
             </Box>

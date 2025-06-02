@@ -19,6 +19,7 @@ export interface Message{
     chat: Chat;
     sender: User;
     content: string;
+    seen: boolean;
     createdAt: Date;
 }
 

@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
-import { Box, CircularProgress } from '@mui/material';
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -20,21 +19,21 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         }
     }, [isAuthenticated, loading, router]);
 
-    if (loading) {
-        return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100vh',
-                    background: '#111322',
-                }}
-            >
-                <CircularProgress sx={{ color: '#ffffff' }} />
-            </Box>
-        );
-    }
+    // if (loading) {
+    //     return (
+    //         <Box
+    //             sx={{
+    //                 display: 'flex',
+    //                 justifyContent: 'center',
+    //                 alignItems: 'center',
+    //                 height: '100vh',
+    //                 background: '#111322',
+    //             }}
+    //         >
+    //             <CircularProgress sx={{ color: '#ffffff' }} />
+    //         </Box>
+    //     );
+    // }
 
     if (!isAuthenticated) {
         return null;

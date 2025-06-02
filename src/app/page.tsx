@@ -12,7 +12,7 @@ import ChatWindow from "./section/chatWindow/ChatWindow";
 import ChatWelcome from "./section/chatWelcome/ChatWelcome";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-const DRAWER_WIDTH = 400;
+const DRAWER_WIDTH = 450;
 
 export default function Home() {
     const dispatch = useDispatch<AppDispatch>();
@@ -43,7 +43,7 @@ export default function Home() {
             socket.off("userStatus");
         };
     }, [user?.id, dispatch]);
-
+    
     const toggleDrawer = () => {
         setDrawerOpen(!drawerOpen);
     };
