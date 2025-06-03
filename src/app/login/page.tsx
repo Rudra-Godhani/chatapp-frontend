@@ -50,6 +50,7 @@ export default function Login() {
                 justifyContent: "center",
                 alignItems: "center",
                 background: "linear-gradient(90deg, #1e1e4e 10%, #ad5389 140%)",
+                p:"30px"
             }}
         >
             <Card
