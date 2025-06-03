@@ -18,7 +18,6 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import CircleIcon from "@mui/icons-material/Circle";
-import ChatTabs from "../tabs/Tabs";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store/store";
 import { setActiveChat, setSelectedUsers } from "@/app/store/slices/chatSlice";
