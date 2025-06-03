@@ -33,12 +33,14 @@ const ChatWindow = () => {
     };
 
     useEffect(() => {
-        if(activeChat?.id){
-            scrollToBottom(false);
-        }else{
+        const timer = setTimeout(() => {
             scrollToBottom(true);
-        }
-    }, [activeChat?.messages]);
+        }, 200);
+
+        return () => clearTimeout(timer);
+    }, [activeChat]);
+
+    
 
     useEffect(() => {
         if (activeChat?.id) {
@@ -47,6 +49,10 @@ const ChatWindow = () => {
                 chatId: activeChat.id,
                 userId: user?.id,
             });
+
+            setTimeout(() => {
+                scrollToBottom(false);
+            }, 0);
         }
 
         socket.on("receiveMessage", (newMessage) => {
@@ -93,7 +99,7 @@ const ChatWindow = () => {
             socket.off("typing");
             socket.off("stopTyping");
         };
-    }, [activeChat?.id, activeChatUser?.id, dispatch, user?.id, message]);
+    }, [activeChat?.id, activeChatUser?.id, dispatch, user?.id]);
 
     if (!activeChatUser) {
         return null;

@@ -1,9 +1,10 @@
 import { AnyAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
-import { AppDispatch } from "../store";
+import { AppDispatch, RootState } from "../store";
 import { ApiResponse, Chat, GetAllUsersResponse, GetUserChatsResponse, GetUserResponse, LoginResponse, LogoutResponse, Message, RegisterResponse, StartChatResponse, User } from "@/app/type/type";
 import { BASE_URL } from "@/app/constants/const";
 import { resetChatState, updateActiveChatUserStatus } from "./chatSlice";
+import { socket } from "@/socket";
 
 interface AuthState {
     loading: boolean;
@@ -65,7 +66,7 @@ const userSlice = createSlice({
         loginFailed: (state, action: PayloadAction<{ message: string }>) => {
             state.loading = false;
             state.isAuthenticated = false;
-            state.error = action.payload.message;
+            state.error = action.payload?.message;
         },
         fetchAllUserRequest: (state) => {
             state.loading = true;
@@ -332,7 +333,13 @@ export const updateChatMessages =
         dispatch(userSlice.actions.updateChatMessages({ chatId, message }));
     };
 
-export const logout = () => async (dispatch: AppDispatch) => {
+export const logout = () => async (dispatch: AppDispatch, getState: () => RootState) => {
+    const state = getState();
+    const userId = state.user.user?.id;
+
+    if (userId) {
+        socket.emit("userLogout", userId);
+    }
     await handleApiCall<LogoutResponse>(
         dispatch,
         userSlice.actions.logoutRequest,

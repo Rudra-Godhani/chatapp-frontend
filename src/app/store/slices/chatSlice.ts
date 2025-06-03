@@ -51,17 +51,15 @@ const chatSlice = createSlice({
         },
 
         addMessage: (state, action: PayloadAction<Message>) => {
-            const existingMessageIndex = state.activeChat?.messages?.findIndex(
-                (msg) => msg.id === action.payload.id
-            );
-            if (
-                existingMessageIndex !== undefined &&
-                existingMessageIndex !== -1
-            ) {
-                state.activeChat!.messages[existingMessageIndex] =
-                    action.payload;
-            } else {
-                state.activeChat!.messages.push(action.payload);
+            if (state.activeChat && state.activeChat.id === action.payload.chat.id) {
+                const existingMessageIndex = state.activeChat.messages.findIndex(
+                    (msg) => msg.id === action.payload.id
+                );
+                if (existingMessageIndex !== -1) {
+                    state.activeChat.messages[existingMessageIndex] = action.payload;
+                } else {
+                    state.activeChat.messages.push(action.payload);
+                }
             }
         },
 
@@ -80,7 +78,6 @@ const chatSlice = createSlice({
                 };
             }
 
-            // Update status in activeChat if it exists
             if (state.activeChat) {
                 if (state.activeChat.user1.id === action.payload.userId) {
                     state.activeChat = {

@@ -31,6 +31,10 @@ export default function Home() {
     }, [user?.id, dispatch]);
 
     useEffect(() => {
+        if (!socket.connected) {
+            socket.connect();
+        }
+        
         if (user?.id) {
             socket.emit("userConnect", user.id);
         }
@@ -38,12 +42,12 @@ export default function Home() {
         socket.on("userStatus", ({ userId, online }) => {
             dispatch(updateUserStatus(userId, online));
         });
-        
+
         return () => {
             socket.off("userStatus");
         };
     }, [user?.id, dispatch]);
-    
+
     const toggleDrawer = () => {
         setDrawerOpen(!drawerOpen);
     };
