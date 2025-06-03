@@ -79,14 +79,14 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
         if (!createdAt) return "";
 
         const messageDate = new Date(createdAt);
-        const localDate = new Date(
-            messageDate.getTime() - messageDate.getTimezoneOffset() * 60000
-        );
+        // const localDate = new Date(
+        //     messageDate.getTime() - messageDate.getTimezoneOffset() * 60000
+        // );
         const currentDate = new Date();
 
-        const messageYear = localDate.getFullYear();
-        const messageMonth = localDate.getMonth();
-        const messageDay = localDate.getDate();
+        const messageYear = messageDate.getFullYear();
+        const messageMonth = messageDate.getMonth();
+        const messageDay = messageDate.getDate();
         const currentYear = currentDate.getFullYear();
         const currentMonth = currentDate.getMonth();
         const currentDay = currentDate.getDate();
@@ -102,7 +102,7 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
             messageDay === currentDay - 1;
 
         if (isToday) {
-            return localDate.toLocaleTimeString(undefined, {
+            return messageDate.toLocaleTimeString(undefined, {
                 hour: "2-digit",
                 minute: "2-digit",
                 hour12: false,
@@ -110,7 +110,7 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
         } else if (isYesterday) {
             return "Yesterday";
         } else {
-            return localDate.toLocaleDateString(undefined, {
+            return messageDate.toLocaleDateString(undefined, {
                 day: "2-digit",
                 month: "2-digit",
                 year: "numeric",
