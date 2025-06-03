@@ -60,7 +60,6 @@ const NewChatModal = ({ open, onClose, onLoadingChange }: NewChatModalProps) => 
         }
     };
 
-    // Filter users who do not have chats with messages
     const filteredUsers = users?.filter((u) => {
         if (u.id === user?.id) return false;
         const existingChat = chats?.find(
@@ -119,8 +118,6 @@ const NewChatModal = ({ open, onClose, onLoadingChange }: NewChatModalProps) => 
                         <CloseIcon sx={{ color: "#FFFFFF", fontSize: { xs: 20, sm: 24 } }} />
                     </IconButton>
                 </Box>
-
-                <ChatTabs />
 
                 <TextField
                     variant="outlined"
