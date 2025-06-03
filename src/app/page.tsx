@@ -23,6 +23,7 @@ export default function Home() {
     const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
     useEffect(() => {
+        console.log("app.jsx useEffect");
         dispatch(getAllUsers());
         dispatch(getUser());
         if (user?.id) {
