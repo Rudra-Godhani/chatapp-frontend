@@ -29,3 +29,20 @@ export interface Chat {
     user2: User;
     messages: Message[];
 }
+
+export type RegisterResponse = { user: User; message: string };
+export type LoginResponse = { user: User; message: string };
+export type GetAllUsersResponse = { users: User[] };
+export type GetUserChatsResponse = { chats: Chat[] };
+export type StartChatResponse = { chats: Chat[] };
+export type GetUserResponse = { user: User };
+export type LogoutResponse = { message: string };
+
+export type ApiResponse =
+    | RegisterResponse
+    | LoginResponse
+    | GetAllUsersResponse
+    | GetUserChatsResponse
+    | StartChatResponse
+    | GetUserResponse
+    | LogoutResponse;

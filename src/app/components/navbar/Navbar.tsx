@@ -42,14 +42,12 @@ const Navbar = ({ toggleDrawer }: NavbarProps) => {
     };
 
     const handleLogout = () => {
-        console.log("Initiating logout");
         dispatch(logout());
         handleClose();
     };
 
     useEffect(() => {
         if (message) {
-            console.log("Logout message received:", message);
             toast.success(message);
             router.push("/login");
         }

@@ -132,14 +132,6 @@ export default function Login() {
                             {errors.password.message}
                         </span>
                     )}
-                    <Box sx={{ textAlign: "right", mb: 2 }}>
-                        <Link
-                            href="#"
-                            className="text-[#ff6b6b] text-[15px] decoration-none"
-                        >
-                            Forget password?
-                        </Link>
-                    </Box>
                     <Button
                         fullWidth
                         sx={{

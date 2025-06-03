@@ -10,11 +10,11 @@ const TypingIndicator = () => {
                 gap: 0.5,
             }}
         >
-            <Typography variant="body2" lineHeight={"12px"}>typing</Typography>
+            <Typography variant="body2" sx={{ fontSize: { xs: "12px", sm: "14px" } }}>typing</Typography>
             <Box
                 sx={{
-                    width: 3,
-                    height: 3,
+                    width: 2,
+                    height: 2,
                     bgcolor: "#fff",
                     borderRadius: "50%",
                     animation: "bounce 1.4s infinite",
@@ -27,8 +27,8 @@ const TypingIndicator = () => {
             />
             <Box
                 sx={{
-                    width: 3,
-                    height: 3,
+                    width: 2,
+                    height: 2,
                     bgcolor: "#fff",
                     borderRadius: "50%",
                     animation: "bounce 1.4s infinite",
@@ -41,8 +41,8 @@ const TypingIndicator = () => {
             />
             <Box
                 sx={{
-                    width: 3,
-                    height: 3,
+                    width: 2,
+                    height: 2,
                     bgcolor: "#fff",
                     borderRadius: "50%",
                     animation: "bounce 1.4s infinite",

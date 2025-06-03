@@ -1,28 +1,9 @@
 import { AnyAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 import { AppDispatch } from "../store";
-import { Chat, Message, User } from "@/app/type/type";
+import { ApiResponse, Chat, GetAllUsersResponse, GetUserChatsResponse, GetUserResponse, LoginResponse, LogoutResponse, Message, RegisterResponse, StartChatResponse, User } from "@/app/type/type";
 import { BASE_URL } from "@/app/constants/const";
 import { resetChatState, updateActiveChatUserStatus } from "./chatSlice";
-
-// Define response types for each API call
-type RegisterResponse = { user: User; message: string };
-type LoginResponse = { user: User; message: string };
-type GetAllUsersResponse = { users: User[] };
-type GetUserChatsResponse = { chats: Chat[] };
-type StartChatResponse = { chats: Chat[] };
-type GetUserResponse = { user: User };
-type LogoutResponse = { message: string };
-
-// Union type for all possible API responses
-type ApiResponse =
-    | RegisterResponse
-    | LoginResponse
-    | GetAllUsersResponse
-    | GetUserChatsResponse
-    | StartChatResponse
-    | GetUserResponse
-    | LogoutResponse;
 
 interface AuthState {
     loading: boolean;
@@ -137,14 +118,12 @@ const userSlice = createSlice({
         },
         fetchUserFailed: (
             state,
-            action: PayloadAction<{
-                message: string;
-            }>
+            action: PayloadAction<{ message: string }>
         ) => {
             state.loading = false;
             state.isAuthenticated = false;
             state.user = null;
-            state.error = action.payload.message;
+            state.error = action.payload?.message;
         },
         logoutRequest: (state) => {
             state.loading = true;
@@ -217,7 +196,7 @@ const handleApiCall = async <T extends ApiResponse>(
     dispatch: AppDispatch,
     requestAction: () => AnyAction,
     successAction: (data: T) => AnyAction,
-    failureAction: (data: { message: string }) => AnyAction,
+    failureAction: ((data: { message: string }) => AnyAction) | (() => AnyAction),
     apiCall: () => Promise<{ data: T }>
 ) => {
     dispatch(requestAction());
@@ -226,13 +205,15 @@ const handleApiCall = async <T extends ApiResponse>(
         dispatch(successAction(response.data));
     } catch (error) {
         const err = error as AxiosError<{ message: string }>;
-        dispatch(
-            failureAction({
-                message:
-                    err.response?.data?.message ||
-                    "Something went wrong. Please try again.",
-            })
-        );
+        if (failureAction.length === 1) {
+            dispatch(
+                (failureAction as (data: { message: string }) => AnyAction)({
+                    message: err.response?.data?.message || "Something went wrong. Please try again."
+                })
+            );
+        } else {
+            dispatch((failureAction as () => AnyAction)());
+        }
     }
 };
 

@@ -19,7 +19,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
-import ChatTabs from "./tabs/Tabs";
 import { User } from "@/app/type/type";
 import NewChatModal from "./newChatModel/NewChatModel";
 import { getUserChats } from "@/app/store/slices/userSlice";
@@ -85,7 +84,6 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
         );
         const currentDate = new Date();
 
-        // Extract date components for comparison
         const messageYear = localDate.getFullYear();
         const messageMonth = localDate.getMonth();
         const messageDay = localDate.getDate();
@@ -207,7 +205,6 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
                 >
                     New Chat
                 </Button>
-                <ChatTabs />
             </Stack>
             <Box
                 sx={{
@@ -259,16 +256,6 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
                     </Typography>
                 ) : (
                     <Box sx={{ mt: 2 }}>
-                        <Typography
-                            sx={{
-                                color: "#FFFFFF",
-                                mb: 1,
-                                fontSize: { xs: "16px", sm: "18px" },
-                            }}
-                        >
-                            Users:
-                        </Typography>
-                        <Typography>{user?.online ? "online" : "offline"}</Typography>
                         {filteredUsers.map((otherUser, index) => {
                             const userChat = chats.find(
                                 (c) =>

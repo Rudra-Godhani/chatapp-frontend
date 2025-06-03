@@ -46,7 +46,7 @@ const NewChatModal = ({ open, onClose, onLoadingChange }: NewChatModalProps) => 
             const newChat = chats.find(
                 (chat) =>
                     (chat.user1.id === selectedUser.id || chat.user2.id === selectedUser.id) &&
-                    (!chat.messages || chat.messages.length === 0) // Ensure chat is new or empty
+                    (!chat.messages || chat.messages.length === 0)
             );
 
             if (newChat) {

@@ -33,7 +33,11 @@ const ChatWindow = () => {
     };
 
     useEffect(() => {
-        scrollToBottom(true);
+        if(activeChat?.id){
+            scrollToBottom(false);
+        }else{
+            scrollToBottom(true);
+        }
     }, [activeChat?.messages]);
 
     useEffect(() => {
@@ -43,7 +47,6 @@ const ChatWindow = () => {
                 chatId: activeChat.id,
                 userId: user?.id,
             });
-            scrollToBottom(false);
         }
 
         socket.on("receiveMessage", (newMessage) => {

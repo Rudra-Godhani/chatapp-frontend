@@ -26,7 +26,7 @@ const storage = typeof window !== "undefined"
 const persistConfig = {
     key: "root",
     storage,
-    whitelist: ["user"],
+    whitelist: [],
 };
 
 const rootReducer = combineReducers({
