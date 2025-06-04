@@ -1,4 +1,3 @@
-// store/slices/chatSlice.ts
 import { Chat, Message, User } from "@/app/type/type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 

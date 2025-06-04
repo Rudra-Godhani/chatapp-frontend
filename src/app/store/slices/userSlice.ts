@@ -4,7 +4,7 @@ import { AppDispatch, RootState } from "../store";
 import { ApiResponse, Chat, GetAllUsersResponse, GetUserChatsResponse, GetUserResponse, LoginResponse, LogoutResponse, Message, RegisterResponse, StartChatResponse, User } from "@/app/type/type";
 import { BASE_URL } from "@/app/constants/const";
 import { resetChatState, updateActiveChatUserStatus } from "./chatSlice";
-import { socket } from "@/socket";
+import { socket } from "@/app/utils/socket";
 
 interface AuthState {
     loading: boolean;
@@ -192,7 +192,6 @@ const userSlice = createSlice({
     },
 });
 
-// Updated handleApiCall with generic type
 const handleApiCall = async <T extends ApiResponse>(
     dispatch: AppDispatch,
     requestAction: () => AnyAction,

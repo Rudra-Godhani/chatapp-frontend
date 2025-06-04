@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "./store/store";
 import { getAllUsers, getUser, getUserChats, updateUserStatus } from "./store/slices/userSlice";
-import Navbar from "./components/navbar/Navbar";
 import { Box, Drawer, useMediaQuery, useTheme } from "@mui/material";
 import Sidebar from "./section/sidebar/Sidebar";
-import { socket } from "@/socket";
+import { socket } from "@/app/utils/socket";
 import ChatWindow from "./section/chatWindow/ChatWindow";
-import ChatWelcome from "./section/chatWelcome/ChatWelcome";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Navbar from "./components/Navbar";
+import ChatWelcome from "./section/ChatWelcome";
 
 const DRAWER_WIDTH = 450;
 

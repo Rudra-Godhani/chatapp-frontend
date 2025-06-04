@@ -1,14 +1,15 @@
 "use client";
 
-import { Box, Card, Typography, TextField, Button, CircularProgress } from "@mui/material";
+import { Box, Card, Typography, TextField, Button, CircularProgress, IconButton, InputAdornment } from "@mui/material";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { clearAllUserErrorsAndMessages, login } from "../store/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../store/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 interface FormData {
     email: string;
@@ -24,9 +25,14 @@ export default function Login() {
         handleSubmit,
         formState: { errors },
     } = useForm<FormData>();
+    const [showPassword, setShowPassword] = useState(false);
 
     const onSubmit = async (data: FormData) => {
         dispatch(login(data));
+    };
+
+    const handleClickShowPassword = () => {
+        setShowPassword((show) => !show);
     };
 
     useEffect(() => {
@@ -109,8 +115,22 @@ export default function Login() {
                     <TextField
                         fullWidth
                         label="Password"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         {...register("password", { required: "Password is required" })}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        edge="end"
+                                        sx={{ color: "#b0b0b0" }}
+                                    >
+                                        {!showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
                         sx={{
                             mb: "1rem",
                             "& .MuiInputBase-root": {

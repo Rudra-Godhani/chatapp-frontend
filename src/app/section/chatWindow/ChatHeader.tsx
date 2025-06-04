@@ -1,5 +1,6 @@
-import TypingIndicator from "@/app/components/typingIndicator/TypingIndicator";
+import TypingIndicator from "@/app/components/TypingIndicator";
 import { RootState } from "@/app/store/store";
+import { getInitials } from "@/app/utils/getInitials";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 
@@ -26,7 +27,7 @@ export const ChatHeader = () => {
                     height: { xs: 36, sm: 45 },
                 }}
             >
-                {activeChatUser?.username.charAt(0).toUpperCase()}
+                {getInitials(activeChatUser!.username)}
             </Avatar>
             <Stack>
                 <Typography

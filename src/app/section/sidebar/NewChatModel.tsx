@@ -23,6 +23,7 @@ import { AppDispatch, RootState } from "@/app/store/store";
 import { setActiveChat, setSelectedUsers } from "@/app/store/slices/chatSlice";
 import { startChat } from "@/app/store/slices/userSlice";
 import { User } from "@/app/type/type";
+import { getInitials } from "@/app/utils/getInitials";
 
 interface NewChatModalProps {
     open: boolean;
@@ -180,7 +181,7 @@ const NewChatModal = ({ open, onClose, onLoadingChange }: NewChatModalProps) => 
                                                 height: { xs: 36, sm: 40 },
                                             }}
                                         >
-                                            {user.username.charAt(0).toUpperCase()}
+                                            {getInitials(user.username)}
                                         </Avatar>
                                     </ListItemAvatar>
                                     <ListItemText

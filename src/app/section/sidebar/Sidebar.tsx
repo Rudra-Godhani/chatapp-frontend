@@ -20,9 +20,11 @@ import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
 import { User } from "@/app/type/type";
-import NewChatModal from "./newChatModel/NewChatModel";
+import NewChatModal from "./NewChatModel";
 import { getUserChats } from "@/app/store/slices/userSlice";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
+import { formatMessageTimestamp } from "@/app/utils/formatMessageTimestamp";
+import { getInitials } from "@/app/utils/getInitials";
 
 interface SidebarProps {
     toggleDrawer?: () => void;
@@ -74,50 +76,6 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
             u.username.toLowerCase().includes(search.toLowerCase()) ||
             u.email.toLowerCase().includes(search.toLowerCase())
     );
-
-    const formatMessageTimestamp = (createdAt: string | Date | undefined) => {
-        if (!createdAt) return "";
-
-        const messageDate = new Date(createdAt);
-        // const localDate = new Date(
-        //     messageDate.getTime() - messageDate.getTimezoneOffset() * 60000
-        // );
-        const currentDate = new Date();
-
-        const messageYear = messageDate.getFullYear();
-        const messageMonth = messageDate.getMonth();
-        const messageDay = messageDate.getDate();
-        const currentYear = currentDate.getFullYear();
-        const currentMonth = currentDate.getMonth();
-        const currentDay = currentDate.getDate();
-
-        const isToday =
-            messageYear === currentYear &&
-            messageMonth === currentMonth &&
-            messageDay === currentDay;
-
-        const isYesterday =
-            messageYear === currentYear &&
-            messageMonth === currentMonth &&
-            messageDay === currentDay - 1;
-
-        if (isToday) {
-            return messageDate.toLocaleTimeString(undefined, {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-            });
-        } else if (isYesterday) {
-            return "Yesterday";
-        } else {
-            return messageDate.toLocaleDateString(undefined, {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-            });
-        }
-    };
-
 
     return (
         <Box
@@ -215,16 +173,6 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
                     pb: 1,
                     scrollbarWidth: "thin",
                     scrollbarColor: "#A07ACD #111322",
-                    "&::-webkit-scrollbar": {
-                        width: "8px",
-                    },
-                    "&::-webkit-scrollbar-track": {
-                        background: "#111322",
-                    },
-                    "&::-webkit-scrollbar-thumb": {
-                        backgroundColor: "#A07ACD",
-                        borderRadius: "4px",
-                    },
                 }}
             >
                 {isNewChatLoading ? (
@@ -276,7 +224,6 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
                                 userChat?.messages?.[
                                 userChat.messages.length - 1
                                 ];
-                            // const latestMessage = messages[messages.length - 1];
                             const timestampLabel = formatMessageTimestamp(
                                 latestMessage?.createdAt
                             );
@@ -344,9 +291,7 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
                                                     height: { xs: 40, sm: 45 },
                                                 }}
                                             >
-                                                {otherUser.username
-                                                    .charAt(0)
-                                                    .toUpperCase()}
+                                                {getInitials(otherUser.username)}
                                             </Avatar>
                                         </Box>
                                         <Box

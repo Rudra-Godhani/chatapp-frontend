@@ -64,9 +64,6 @@ export const ChatMessage = ({ messagesContainerRef }: ChatMessageProps) => {
                         activeChat?.messages.map((msg, index) => {
                             const timestamp = msg.createdAt;
                             const date = new Date(timestamp);
-                            // const localDate = new Date(
-                            //     date.getTime() - date.getTimezoneOffset() * 60000
-                            // );
                             const hours = date
                                 .getHours()
                                 .toString()
