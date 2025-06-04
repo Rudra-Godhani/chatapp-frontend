@@ -12,7 +12,6 @@ import {
     InputAdornment,
     Avatar,
     IconButton,
-    CircularProgress,
     Badge,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -39,7 +38,6 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
         (state: RootState) => state.user
     );
     const { activeChat } = useSelector((state: RootState) => state.chat);
-    const [isNewChatLoading, setIsNewChatLoading] = useState(false);
 
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
@@ -176,23 +174,7 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
                     scrollbarColor: "#A07ACD #111322",
                 }}
             >
-                {isNewChatLoading ? (
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            mt: 5,
-                        }}
-                    >
-                        <CircularProgress
-                            size={24}
-                            sx={{
-                                color: "#FFFFFF",
-                            }}
-                        />
-                    </Box>
-                ) : filteredUsers.length === 0 ? (
+                {filteredUsers.length === 0 ? (
                     <Typography
                         sx={{
                             color: "#FFFFFF",
@@ -445,7 +427,6 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
             <NewChatModal
                 open={openModal}
                 onClose={handleCloseModal}
-                onLoadingChange={setIsNewChatLoading}
                 toggleDrawer={toggleDrawer}
             />
         </Box>

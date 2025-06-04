@@ -28,11 +28,10 @@ import { getInitials } from "@/app/utils/getInitials";
 interface NewChatModalProps {
     open: boolean;
     onClose: () => void;
-    onLoadingChange: (loading: boolean) => void;
     toggleDrawer?: () => void;
 }
 
-const NewChatModal = ({ open, onClose, onLoadingChange, toggleDrawer }: NewChatModalProps) => {
+const NewChatModal = ({ open, onClose, toggleDrawer }: NewChatModalProps) => {
     const [search, setSearch] = useState("");
     const [isSelecting, setIsSelecting] = useState(false);
     const dispatch = useDispatch<AppDispatch>();
@@ -41,7 +40,6 @@ const NewChatModal = ({ open, onClose, onLoadingChange, toggleDrawer }: NewChatM
     const handleUserSelect = async (selectedUser: User) => {
         if (!user?.id) return;
         setIsSelecting(true);
-        onLoadingChange(true);
         try {
             await dispatch(startChat({ userId1: user.id, userId2: selectedUser.id })).unwrap();
             const updatedChats = chats;
@@ -60,7 +58,6 @@ const NewChatModal = ({ open, onClose, onLoadingChange, toggleDrawer }: NewChatM
             }
         } finally {
             setIsSelecting(false);
-            onLoadingChange(false);
             onClose();
         }
     };
