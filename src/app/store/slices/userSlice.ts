@@ -124,7 +124,7 @@ const userSlice = createSlice({
             state.loading = false;
             state.isAuthenticated = false;
             state.user = null;
-            state.error = action.payload?.message;
+            state.error = action.payload.message;
         },
         logoutRequest: (state) => {
             state.loading = true;
@@ -154,7 +154,6 @@ const userSlice = createSlice({
                     ? { ...user, online: action.payload.online }
                     : user
             );
-
             state.chats = state.chats.map((chat) => ({
                 ...chat,
                 user1:
@@ -196,7 +195,7 @@ const handleApiCall = async <T extends ApiResponse>(
     dispatch: AppDispatch,
     requestAction: () => AnyAction,
     successAction: (data: T) => AnyAction,
-    failureAction: ((data: { message: string }) => AnyAction) | (() => AnyAction),
+    failureAction: (data: { message: string; productId?: string }) => AnyAction,
     apiCall: () => Promise<{ data: T }>
 ) => {
     dispatch(requestAction());
@@ -205,15 +204,13 @@ const handleApiCall = async <T extends ApiResponse>(
         dispatch(successAction(response.data));
     } catch (error) {
         const err = error as AxiosError<{ message: string }>;
-        if (failureAction.length === 1) {
-            dispatch(
-                (failureAction as (data: { message: string }) => AnyAction)({
-                    message: err.response?.data?.message || "Something went wrong. Please try again."
-                })
-            );
-        } else {
-            dispatch((failureAction as () => AnyAction)());
-        }
+        dispatch(
+            failureAction({
+                message:
+                    err.response?.data?.message ||
+                    "Something went wrong. Please try again.",
+            })
+        );
     }
 };
 
