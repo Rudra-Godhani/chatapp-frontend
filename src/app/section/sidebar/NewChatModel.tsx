@@ -21,7 +21,7 @@ import CircleIcon from "@mui/icons-material/Circle";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store/store";
 import { setActiveChat, setSelectedUsers } from "@/app/store/slices/chatSlice";
-import { getUserChats, startChat } from "@/app/store/slices/userSlice";
+import { startChat } from "@/app/store/slices/userSlice";
 import { User } from "@/app/type/type";
 import { getInitials } from "@/app/utils/getInitials";
 
