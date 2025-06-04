@@ -55,6 +55,7 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
             dispatch(setActiveChat({ chat, currentUserId: user.id }));
             await dispatch(getUserChats(user.id));
         }
+        console.log(isMobile,toggleDrawer)
         if (isMobile && toggleDrawer) {
             toggleDrawer();
         }
@@ -445,6 +446,7 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
                 open={openModal}
                 onClose={handleCloseModal}
                 onLoadingChange={setIsNewChatLoading}
+                toggleDrawer={toggleDrawer}
             />
         </Box>
     );

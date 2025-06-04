@@ -29,9 +29,10 @@ interface NewChatModalProps {
     open: boolean;
     onClose: () => void;
     onLoadingChange: (loading: boolean) => void;
+    toggleDrawer?: () => void;
 }
 
-const NewChatModal = ({ open, onClose, onLoadingChange }: NewChatModalProps) => {
+const NewChatModal = ({ open, onClose, onLoadingChange, toggleDrawer }: NewChatModalProps) => {
     const [search, setSearch] = useState("");
     const [isSelecting, setIsSelecting] = useState(false);
     const dispatch = useDispatch<AppDispatch>();
@@ -43,7 +44,8 @@ const NewChatModal = ({ open, onClose, onLoadingChange }: NewChatModalProps) => 
         onLoadingChange(true);
         try {
             await dispatch(startChat(user.id, selectedUser.id));
-            const newChat = chats.find(
+            const updatedChats = chats;
+            const newChat = updatedChats.find(
                 (chat) =>
                     (chat.user1.id === selectedUser.id || chat.user2.id === selectedUser.id) &&
                     (!chat.messages || chat.messages.length === 0)
@@ -52,6 +54,9 @@ const NewChatModal = ({ open, onClose, onLoadingChange }: NewChatModalProps) => 
             if (newChat) {
                 dispatch(setSelectedUsers(selectedUser));
                 dispatch(setActiveChat({ chat: newChat, currentUserId: user.id }));
+                if (toggleDrawer) {
+                    toggleDrawer();
+                }
             }
         } finally {
             setIsSelecting(false);

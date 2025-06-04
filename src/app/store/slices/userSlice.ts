@@ -288,24 +288,25 @@ export const getUserChats =
 
 export const startChat =
     (userId1: string, userId2: string) => async (dispatch: AppDispatch) => {
-        await handleApiCall<StartChatResponse>(
-            dispatch,
-            userSlice.actions.fetchUserChatsRequest,
-            (data) => {
-                dispatch(getUserChats(userId1));
-                return userSlice.actions.fetchUserChatsSuccess({ chats: data.chats });
-            },
-            userSlice.actions.fetchUserChatsFailed,
-            () =>
-                axios.post(
-                    `${BASE_URL}/chat/start`,
-                    { userId1, userId2 },
-                    {
-                        withCredentials: true,
-                        headers: { "Content-Type": "application/json" },
-                    }
-                )
-        );
+        dispatch(userSlice.actions.fetchUserChatsRequest());
+        try {
+            await axios.post<StartChatResponse>(
+                `${BASE_URL}/chat/start`,
+                { userId1, userId2 },
+                {
+                    withCredentials: true,
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+            await dispatch(getUserChats(userId1));
+        } catch (error) {
+            const err = error as AxiosError<{ message: string }>;
+            dispatch(
+                userSlice.actions.fetchUserChatsFailed({
+                    message: err.response?.data?.message || "Failed to start chat",
+                })
+            );
+        }
     };
 
 export const getUser = () => async (dispatch: AppDispatch) => {
