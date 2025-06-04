@@ -21,7 +21,7 @@ import CircleIcon from "@mui/icons-material/Circle";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store/store";
 import { setActiveChat, setSelectedUsers } from "@/app/store/slices/chatSlice";
-import { startChat } from "@/app/store/slices/userSlice";
+import { getUserChats, startChat } from "@/app/store/slices/userSlice";
 import { User } from "@/app/type/type";
 import { getInitials } from "@/app/utils/getInitials";
 
@@ -43,13 +43,13 @@ const NewChatModal = ({ open, onClose, onLoadingChange, toggleDrawer }: NewChatM
         setIsSelecting(true);
         onLoadingChange(true);
         try {
-            await dispatch(startChat(user.id, selectedUser.id));
+            await dispatch(startChat({ userId1: user.id, userId2: selectedUser.id })).unwrap();
             const updatedChats = chats;
             const newChat = updatedChats.find(
                 (chat) =>
-                    (chat.user1.id === selectedUser.id || chat.user2.id === selectedUser.id) &&
-                    (!chat.messages || chat.messages.length === 0)
-            );
+                  (chat.user1.id === selectedUser.id || chat.user2.id === selectedUser.id) &&
+                  (!chat.messages || chat.messages.length === 0)
+              );
 
             if (newChat) {
                 dispatch(setSelectedUsers(selectedUser));

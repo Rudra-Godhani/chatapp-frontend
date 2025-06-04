@@ -1,4 +1,4 @@
-import { AnyAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AnyAction, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 import { AppDispatch, RootState } from "../store";
 import { ApiResponse, Chat, GetAllUsersResponse, GetUserChatsResponse, GetUserResponse, LoginResponse, LogoutResponse, Message, RegisterResponse, StartChatResponse, User } from "@/app/type/type";
@@ -286,11 +286,15 @@ export const getUserChats =
         );
     };
 
-export const startChat =
-    (userId1: string, userId2: string) => async (dispatch: AppDispatch) => {
-        dispatch(userSlice.actions.fetchUserChatsRequest());
+export const startChat = createAsyncThunk<
+    StartChatResponse,
+    { userId1: string; userId2: string },
+    { dispatch: AppDispatch; state: RootState }
+>(
+    "user/startChat",
+    async ({ userId1, userId2 }, { dispatch }) => {
         try {
-            await axios.post<StartChatResponse>(
+            const response = await axios.post<StartChatResponse>(
                 `${BASE_URL}/chat/start`,
                 { userId1, userId2 },
                 {
@@ -299,15 +303,13 @@ export const startChat =
                 }
             );
             await dispatch(getUserChats(userId1));
+            return response.data;
         } catch (error) {
             const err = error as AxiosError<{ message: string }>;
-            dispatch(
-                userSlice.actions.fetchUserChatsFailed({
-                    message: err.response?.data?.message || "Failed to start chat",
-                })
-            );
+            throw new Error(err.response?.data?.message || "Failed to start chat");
         }
-    };
+    }
+);
 
 export const getUser = () => async (dispatch: AppDispatch) => {
     await handleApiCall<GetUserResponse>(
