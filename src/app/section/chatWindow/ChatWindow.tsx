@@ -44,11 +44,14 @@ const ChatWindow = () => {
 
     useEffect(() => {
         if (activeChat?.id) {
+            console.log("before chat joined 1");
             socket.emit("joinChat", activeChat.id);
+            console.log("before chat joined 2");
             socket.emit("markMessagesSeen", {
                 chatId: activeChat.id,
                 userId: user?.id,
             });
+            console.log("after chat joined");
 
             setTimeout(() => {
                 scrollToBottom(false);
@@ -56,17 +59,21 @@ const ChatWindow = () => {
         }
 
         socket.on("receiveMessage", (newMessage) => {
+            console.log("New message received:", newMessage);
             dispatch(addMessage(newMessage));
+            console.log("before Dispatching updateChatMessages");
             dispatch(
                 updateChatMessages(
                     newMessage.chat.id,
                     newMessage,
                 )
             );
+            console.log("after Dispatching updateChatMessages");
             if (user?.id && store.getState().chat.activeChat?.messages.length === 1) {
                 dispatch(getUserChats(user.id));
             }
             if (user?.id && activeChat?.id) {
+                console.log("Marking messages as seen for chat:", activeChat.id);
                 socket.emit("markMessagesSeen", {
                     chatId: activeChat.id,
                     userId: user.id,
@@ -75,6 +82,7 @@ const ChatWindow = () => {
         });
 
         socket.on("messagesSeen", (updatedMessages) => {
+            console.log("Messages seen updated:", updatedMessages);
             updatedMessages.forEach((msg: Message) => {
                 dispatch(addMessage(msg));
                 dispatch(updateChatMessages(msg.chat.id, msg));
