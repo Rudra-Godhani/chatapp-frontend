@@ -93,9 +93,6 @@ const Navbar = ({ toggleDrawer }: NavbarProps) => {
                     alignItems: "center",
                 }}
             >
-                <IconButton color="inherit" sx={{ color: "#FFFFFF" }}>
-                    <GroupIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
-                </IconButton>
                 <Avatar
                     alt="Profile Photo"
                     onClick={handleAvatarClick}

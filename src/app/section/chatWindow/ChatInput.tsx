@@ -36,7 +36,6 @@ export const ChatInput = ({ message, setMessage }: ChatInputProps) => {
             emojiObject.emoji +
             currentValue.slice(cursorPos);
 
-        // Update message state with the new value
         setMessage(newMessage);
 
         // Force immediate cursor position update
