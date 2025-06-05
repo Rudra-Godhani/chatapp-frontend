@@ -50,7 +50,7 @@ export const ChatMessage = ({ messagesContainerRef }: ChatMessageProps) => {
                                 }}
                             />
                         </Box>
-                    ) : activeChat?.messages.length === 0 ? (
+                    ) : activeChat?.messages?.length === 0 ? (
                         <Typography
                             sx={{
                                 textAlign: "center",
@@ -61,7 +61,7 @@ export const ChatMessage = ({ messagesContainerRef }: ChatMessageProps) => {
                             No messages yet, start messaging
                         </Typography>
                     ) : (
-                        activeChat?.messages.map((msg, index) => {
+                        activeChat?.messages?.map((msg, index) => {
                             const timestamp = msg.createdAt;
                             const date = new Date(timestamp);
                             const hours = date

@@ -34,7 +34,11 @@ export type RegisterResponse = { user: User; message: string };
 export type LoginResponse = { user: User; message: string };
 export type GetAllUsersResponse = { users: User[] };
 export type GetUserChatsResponse = { chats: Chat[] };
-export type StartChatResponse = { chats: Chat[] };
+export type StartChatResponse = { 
+    success: boolean;
+    chat: Chat;
+    message: string;
+};
 export type GetUserResponse = { user: User };
 export type LogoutResponse = { message: string };
 

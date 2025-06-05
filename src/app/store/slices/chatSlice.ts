@@ -51,6 +51,9 @@ const chatSlice = createSlice({
 
         addMessage: (state, action: PayloadAction<Message>) => {
             if (state.activeChat && state.activeChat.id === action.payload.chat.id) {
+                if (!state.activeChat.messages) {
+                    state.activeChat.messages = [];
+                }
                 const existingMessageIndex = state.activeChat.messages.findIndex(
                     (msg) => msg.id === action.payload.id
                 );

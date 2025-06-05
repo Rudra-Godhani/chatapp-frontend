@@ -60,24 +60,16 @@ const ChatWindow = () => {
 
         socket.on("receiveMessage", (newMessage) => {
             console.log("New message received:", newMessage);
-            dispatch(addMessage(newMessage));
-            console.log("before Dispatching updateChatMessages");
-            dispatch(
-                updateChatMessages(
-                    newMessage.chat.id,
-                    newMessage,
-                )
-            );
-            console.log("after Dispatching updateChatMessages");
-            if (user?.id && store.getState().chat.activeChat?.messages.length === 1) {
-                dispatch(getUserChats(user.id));
-            }
-            if (user?.id && activeChat?.id) {
-                console.log("Marking messages as seen for chat:", activeChat.id);
-                socket.emit("markMessagesSeen", {
-                    chatId: activeChat.id,
-                    userId: user.id,
-                });
+            if (activeChat && activeChat.id === newMessage.chat.id) {
+                dispatch(addMessage(newMessage));
+                dispatch(updateChatMessages(newMessage.chat.id, newMessage));
+                
+                if (user?.id) {
+                    socket.emit("markMessagesSeen", {
+                        chatId: activeChat.id,
+                        userId: user.id,
+                    });
+                }
             }
         });
 

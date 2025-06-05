@@ -41,17 +41,11 @@ const NewChatModal = ({ open, onClose, toggleDrawer }: NewChatModalProps) => {
         if (!user?.id) return;
         setIsSelecting(true);
         try {
-            await dispatch(startChat({ userId1: user.id, userId2: selectedUser.id })).unwrap();
-            const updatedChats = chats;
-            const newChat = updatedChats.find(
-                (chat) =>
-                  (chat.user1.id === selectedUser.id || chat.user2.id === selectedUser.id) &&
-                  (!chat.messages || chat.messages.length === 0)
-              );
-
-            if (newChat) {
+            const result = await dispatch(startChat({ userId1: user.id, userId2: selectedUser.id })).unwrap();
+            console.log("result:", result);
+            if (result.chat) {
                 dispatch(setSelectedUsers(selectedUser));
-                dispatch(setActiveChat({ chat: newChat, currentUserId: user.id }));
+                dispatch(setActiveChat({ chat: result.chat, currentUserId: user.id }));
                 if (toggleDrawer) {
                     toggleDrawer();
                 }
@@ -150,8 +144,10 @@ const NewChatModal = ({ open, onClose, toggleDrawer }: NewChatModalProps) => {
                     }}
                 />
 
-                <Box sx={{ maxHeight: "300px", overflowY: "auto", scrollbarWidth: "thin",
-                    scrollbarColor: "#A07ACD #0F101A", }}>
+                <Box sx={{
+                    maxHeight: "300px", overflowY: "auto", scrollbarWidth: "thin",
+                    scrollbarColor: "#A07ACD #0F101A",
+                }}>
                     {filteredUsers.length === 0 && (
                         <Typography
                             sx={{ color: "#FFFFFF", textAlign: "center", fontSize: { xs: "14px", sm: "16px" } }}
