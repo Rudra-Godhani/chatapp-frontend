@@ -99,7 +99,7 @@ const ChatWindow = () => {
             socket.off("typing");
             socket.off("stopTyping");
         };
-    }, [activeChat?.id, activeChatUser?.id, dispatch, user?.id]);
+    }, [activeChat, activeChat?.id, activeChatUser?.id, dispatch, user?.id]);
 
     if (!activeChatUser) {
         return null;

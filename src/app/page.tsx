@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "./store/store";
-import { getAllUsers, getUser, getUserChats, updateUserStatus } from "./store/slices/userSlice";
+import { getAllUsers, getUserChats, updateUserStatus } from "./store/slices/userSlice";
 import { Box, Drawer, useMediaQuery, useTheme } from "@mui/material";
 import Sidebar from "./section/sidebar/Sidebar";
 import { socket } from "@/app/utils/socket";

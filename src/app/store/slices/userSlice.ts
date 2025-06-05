@@ -119,7 +119,8 @@ const userSlice = createSlice({
         },
         fetchUserFailed: (
             state,
-            _action: PayloadAction<{ message: string }>
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            action: PayloadAction<{ message: string }>
         ) => {
             state.loading = false;
             state.isAuthenticated = false;
