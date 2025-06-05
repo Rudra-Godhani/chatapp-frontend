@@ -24,10 +24,8 @@ export default function Home() {
 
     useEffect(() => {
         dispatch(getAllUsers());
-        if (user?.id) {
-            dispatch(getUserChats(user.id));
-        }
-    }, [user?.id, dispatch]);
+       dispatch(getUserChats(user.id));
+    }, []);
 
     useEffect(() => {
         if (!socket.connected) {
