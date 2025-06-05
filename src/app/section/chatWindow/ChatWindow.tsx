@@ -4,11 +4,11 @@ import {
     Box,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import store, { AppDispatch, RootState } from "@/app/store/store";
+import { AppDispatch, RootState } from "@/app/store/store";
 import { useEffect, useState, useRef } from "react";
 import { addMessage, setTyping } from "@/app/store/slices/chatSlice";
 import { socket } from "../../utils/socket";
-import { getUserChats, updateChatMessages } from "@/app/store/slices/userSlice";
+import {  updateChatMessages } from "@/app/store/slices/userSlice";
 import { Message } from "@/app/type/type";
 import { ChatHeader } from "./ChatHeader";
 import { ChatMessage } from "./ChatMessage";
