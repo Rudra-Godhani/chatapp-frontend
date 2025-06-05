@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store/store';
+import { getUser } from '../store/slices/userSlice';
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -11,7 +12,16 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     const router = useRouter();
+    const dispatch = useDispatch<AppDispatch>();
     const { isAuthenticated, loading } = useSelector((state: RootState) => state.user);
+    const getUserCalled = useRef(false);
+
+    useEffect(() => {
+        if (!getUserCalled.current) {
+            getUserCalled.current = true;
+            dispatch(getUser());
+        }
+    }, [dispatch]);
 
     useEffect(() => {
         if (!loading && !isAuthenticated) {

@@ -72,8 +72,8 @@ const Navbar = ({ toggleDrawer }: NavbarProps) => {
         >
             <Box sx={{ display: "flex", gap: { xs: 1, sm: 2 }, alignItems: "center" }}>
                 {isMobile && toggleDrawer && (
-                    <IconButton color="inherit" onClick={toggleDrawer} sx={{ mr: 1 }}>
-                        <MenuIcon sx={{ fontSize: { xs: 24, sm: 28 } }} />
+                    <IconButton onClick={toggleDrawer} sx={{ mr: 1 }}>
+                        <MenuIcon sx={{ fontSize: { xs: 24, sm: 28 }, color:"#FFFFFF" }} />
                     </IconButton>
                 )}
                 <ChatBubbleOutlineIcon

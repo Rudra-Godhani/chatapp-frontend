@@ -24,7 +24,6 @@ export default function Home() {
 
     useEffect(() => {
         dispatch(getAllUsers());
-        dispatch(getUser());
         if (user?.id) {
             dispatch(getUserChats(user.id));
         }

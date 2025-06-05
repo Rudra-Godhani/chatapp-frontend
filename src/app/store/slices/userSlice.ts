@@ -119,12 +119,11 @@ const userSlice = createSlice({
         },
         fetchUserFailed: (
             state,
-            action: PayloadAction<{ message: string }>
+            _action: PayloadAction<{ message: string }>
         ) => {
             state.loading = false;
             state.isAuthenticated = false;
             state.user = null;
-            state.error = action.payload.message;
         },
         logoutRequest: (state) => {
             state.loading = true;
