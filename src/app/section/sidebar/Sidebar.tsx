@@ -53,7 +53,6 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
             dispatch(setActiveChat({ chat, currentUserId: user.id }));
             await dispatch(getUserChats(user.id));
         }
-        console.log(isMobile,toggleDrawer)
         if (isMobile && toggleDrawer) {
             toggleDrawer();
         }

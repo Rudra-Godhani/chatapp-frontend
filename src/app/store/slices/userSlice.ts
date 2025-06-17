@@ -1,7 +1,24 @@
-import { AnyAction, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+    AnyAction,
+    createAsyncThunk,
+    createSlice,
+    PayloadAction,
+} from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
 import { AppDispatch, RootState } from "../store";
-import { ApiResponse, Chat, GetAllUsersResponse, GetUserChatsResponse, GetUserResponse, LoginResponse, LogoutResponse, Message, RegisterResponse, StartChatResponse, User } from "@/app/type/type";
+import {
+    ApiResponse,
+    Chat,
+    GetAllUsersResponse,
+    GetUserChatsResponse,
+    GetUserResponse,
+    LoginResponse,
+    LogoutResponse,
+    Message,
+    RegisterResponse,
+    StartChatResponse,
+    User,
+} from "@/app/type/type";
 import { BASE_URL } from "@/app/constants/const";
 import { resetChatState, updateActiveChatUserStatus } from "./chatSlice";
 import { socket } from "@/app/utils/socket";
@@ -287,26 +304,23 @@ export const startChat = createAsyncThunk<
     StartChatResponse,
     { userId1: string; userId2: string },
     { dispatch: AppDispatch; state: RootState }
->(
-    "user/startChat",
-    async ({ userId1, userId2 }, { dispatch }) => {
-        try {
-            const response = await axios.post<StartChatResponse>(
-                `${BASE_URL}/chat/start`,
-                { userId1, userId2 },
-                {
-                    withCredentials: true,
-                    headers: { "Content-Type": "application/json" },
-                }
-            );
-            await dispatch(getUserChats(userId1));
-            return response.data;
-        } catch (error) {
-            const err = error as AxiosError<{ message: string }>;
-            throw new Error(err.response?.data?.message || "Failed to start chat");
-        }
+>("user/startChat", async ({ userId1, userId2 }, { dispatch }) => {
+    try {
+        const response = await axios.post<StartChatResponse>(
+            `${BASE_URL}/chat/start`,
+            { userId1, userId2 },
+            {
+                withCredentials: true,
+                headers: { "Content-Type": "application/json" },
+            }
+        );
+        await dispatch(getUserChats(userId1));
+        return response.data;
+    } catch (error) {
+        const err = error as AxiosError<{ message: string }>;
+        throw new Error(err.response?.data?.message || "Failed to start chat");
     }
-);
+});
 
 export const getUser = () => async (dispatch: AppDispatch) => {
     await handleApiCall<GetUserResponse>(
@@ -332,27 +346,28 @@ export const updateChatMessages =
         dispatch(userSlice.actions.updateChatMessages({ chatId, message }));
     };
 
-export const logout = () => async (dispatch: AppDispatch, getState: () => RootState) => {
-    const state = getState();
-    const userId = state.user.user?.id;
+export const logout =
+    () => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const state = getState();
+        const userId = state.user.user?.id;
 
-    if (userId) {
-        socket.emit("userLogout", userId);
-    }
-    await handleApiCall<LogoutResponse>(
-        dispatch,
-        userSlice.actions.logoutRequest,
-        (data) => {
-            dispatch(resetChatState());
-            return userSlice.actions.logoutSuccess(data);
-        },
-        userSlice.actions.logoutFailed,
-        () =>
-            axios.get(`${BASE_URL}/user/logout`, {
-                withCredentials: true,
-            })
-    );
-};
+        if (userId) {
+            socket.emit("userLogout", userId);
+        }
+        await handleApiCall<LogoutResponse>(
+            dispatch,
+            userSlice.actions.logoutRequest,
+            (data) => {
+                dispatch(resetChatState());
+                return userSlice.actions.logoutSuccess(data);
+            },
+            userSlice.actions.logoutFailed,
+            () =>
+                axios.get(`${BASE_URL}/user/logout`, {
+                    withCredentials: true,
+                })
+        );
+    };
 
 export const clearAllUserErrorsAndMessages = () => (dispatch: AppDispatch) => {
     dispatch(userSlice.actions.clearAllUserErrorsAndMsgs());

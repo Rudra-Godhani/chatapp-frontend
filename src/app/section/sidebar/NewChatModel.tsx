@@ -42,7 +42,6 @@ const NewChatModal = ({ open, onClose, toggleDrawer }: NewChatModalProps) => {
         setIsSelecting(true);
         try {
             const result = await dispatch(startChat({ userId1: user.id, userId2: selectedUser.id })).unwrap();
-            console.log("result:", result);
             if (result.chat) {
                 dispatch(setSelectedUsers(selectedUser));
                 dispatch(setActiveChat({ chat: result.chat, currentUserId: user.id }));

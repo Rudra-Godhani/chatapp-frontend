@@ -6,6 +6,7 @@ interface ChatState {
     activeChatUser: User | null;
     activeChat: Chat | null;
     isTyping: boolean;
+    isGeneratingResponse: boolean;
 }
 
 const initialState: ChatState = {
@@ -13,6 +14,7 @@ const initialState: ChatState = {
     activeChatUser: null,
     activeChat: null,
     isTyping: false,
+    isGeneratingResponse: false,
 };
 
 const chatSlice = createSlice({
@@ -69,6 +71,10 @@ const chatSlice = createSlice({
             state.isTyping = action.payload;
         },
 
+        setGeneratingResponse: (state, action: PayloadAction<boolean>) => {
+            state.isGeneratingResponse = action.payload;
+        },
+
         updateActiveChatUserStatus: (
             state,
             action: PayloadAction<{ userId: string; online: boolean }>
@@ -115,6 +121,7 @@ export const {
     setActiveChat,
     addMessage,
     setTyping,
+    setGeneratingResponse,
     updateActiveChatUserStatus,
     resetChatState,
 } = chatSlice.actions;

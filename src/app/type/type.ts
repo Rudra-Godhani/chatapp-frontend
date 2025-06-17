@@ -3,11 +3,6 @@ export interface User {
     username: string;
     email: string;
     password: string;
-    phoneNumber: string;
-    profileImage: {
-        public_id: string;
-        url: string;
-    };
     online: boolean;
     token: string;
     createdAt: Date;
