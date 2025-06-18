@@ -1,6 +1,6 @@
 import { Box, Typography, Avatar, Badge } from "@mui/material";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-import { Chat, User } from "@/app/type/type";
+import { Chat, Message, User } from "@/app/type/type";
 import { formatMessageTimestamp } from "@/app/utils/formatMessageTimestamp";
 import { getInitials } from "@/app/utils/getInitials";
 
@@ -21,7 +21,7 @@ const ChatListItem = ({
 }: ChatListItemProps) => {
     const unseenMessageCount =
         userChat?.messages.filter(
-            (msg: any) => msg.seen === false && msg.sender.id !== user?.id
+            (msg: Message) => msg.seen === false && msg.sender.id !== user?.id
         ).length || 0;
 
     const latestMessage = userChat?.messages?.[userChat.messages.length - 1];
