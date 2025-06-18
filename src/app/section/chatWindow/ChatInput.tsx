@@ -69,11 +69,11 @@ export const ChatInput = ({ message, setMessage }: ChatInputProps) => {
                 seen: true,
                 createdAt: new Date()
             };
-            
+
             dispatch(addMessage(userMessage));
             setMessage("");
             setShowEmojiPicker(false);
-            
+
             dispatch(setGeneratingResponse(true));
 
             const messageHistory = activeChat.messages.slice(-10).map((msg) => ({
@@ -81,22 +81,34 @@ export const ChatInput = ({ message, setMessage }: ChatInputProps) => {
                 content: msg.content
             }));
 
-            messageHistory.push({role:"user", content: message});
-            const response = await ollama.chat({
-                model: "llama3.2:1b",
-                messages: messageHistory
-            });
-            dispatch(setGeneratingResponse(false));
-            
-            const aiResponse = {
-                id: (Date.now() + 1).toString(),
-                chat: activeChat,
-                sender: activeChatUser!,
-                content: response.message.content,
-                seen: true,
-                createdAt: new Date()
-            };
-            dispatch(addMessage(aiResponse));
+            messageHistory.push({ role: "user", content: message });
+            try {
+                const response = await ollama.chat({
+                    model: "llama3.2",
+                    messages: messageHistory
+                });
+                const aiResponse = {
+                    id: (Date.now() + 1).toString(),
+                    chat: activeChat,
+                    sender: activeChatUser!,
+                    content: response.message.content,
+                    seen: true,
+                    createdAt: new Date()
+                };
+                dispatch(addMessage(aiResponse));
+            } catch {
+                const errorMessage = {
+                    id: (Date.now() + 1).toString(),
+                    chat: activeChat,
+                    sender: activeChatUser!,
+                    content: "Sorry, I encountered an error. Please try again.",
+                    seen: true,
+                    createdAt: new Date()
+                };
+                dispatch(addMessage(errorMessage));
+            } finally {
+                dispatch(setGeneratingResponse(false));
+            }
             return;
         }
 
