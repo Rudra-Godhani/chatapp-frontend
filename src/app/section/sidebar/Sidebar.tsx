@@ -2,7 +2,7 @@
 
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store/store";
-import { setActiveChat } from "@/app/store/slices/chatSlice";
+import { setActiveChat, setGeneratingResponse } from "@/app/store/slices/chatSlice";
 import {
     Box,
     Button,
@@ -31,7 +31,7 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
     const { users, chats, user } = useSelector(
         (state: RootState) => state.user
     );
-    const { activeChat } = useSelector((state: RootState) => state.chat);
+    const { activeChat,isGeneratingResponse } = useSelector((state: RootState) => state.chat);
 
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
@@ -46,6 +46,7 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
         if (chat) {
             dispatch(setActiveChat({ chat, currentUserId: user.id }));
             await dispatch(getUserChats(user.id));
+            dispatch(setGeneratingResponse(false));
         }
         if (isMobile && toggleDrawer) {
             toggleDrawer();
