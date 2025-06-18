@@ -8,6 +8,9 @@ export const ChatHeader = () => {
     const { activeChatUser, isTyping } = useSelector(
         (state: RootState) => state.chat
     );
+
+    const isChatbot = activeChatUser?.id === "chatbot";
+
     return (
         <Box
             sx={{
@@ -36,7 +39,7 @@ export const ChatHeader = () => {
                 >
                     {activeChatUser?.username}
                 </Typography>
-                {
+                {!isChatbot && (
                     isTyping ? <TypingIndicator /> :
                         <Typography
                             variant="body2"
@@ -45,6 +48,7 @@ export const ChatHeader = () => {
                         >
                             {activeChatUser?.online ? "online" : "offline"}
                         </Typography>
+                )
                 }
             </Stack>
         </Box>

@@ -8,7 +8,7 @@ import { AppDispatch, RootState } from "@/app/store/store";
 import { useEffect, useState, useRef } from "react";
 import { addMessage, setTyping } from "@/app/store/slices/chatSlice";
 import { socket } from "../../utils/socket";
-import {  updateChatMessages } from "@/app/store/slices/userSlice";
+import { updateChatMessages } from "@/app/store/slices/userSlice";
 import { Message } from "@/app/type/type";
 import { ChatHeader } from "./ChatHeader";
 import { ChatMessage } from "./ChatMessage";
@@ -23,6 +23,7 @@ const ChatWindow = () => {
     const [message, setMessage] = useState("");
     const messagesContainerRef = useRef<HTMLDivElement>(null);
 
+    const isChatbot = activeChatUser?.id === "chatbot";
     const scrollToBottom = (smooth = false) => {
         if (messagesContainerRef.current) {
             messagesContainerRef.current.scrollTo({
@@ -40,41 +41,37 @@ const ChatWindow = () => {
         return () => clearTimeout(timer);
     }, [activeChat]);
 
-    
+
 
     useEffect(() => {
-        if (activeChat?.id) {
-            console.log("before chat joined 1");
+        if (!isChatbot && activeChat?.id) {
             socket.emit("joinChat", activeChat.id);
-            console.log("before chat joined 2");
             socket.emit("markMessagesSeen", {
                 chatId: activeChat.id,
                 userId: user?.id,
             });
-            console.log("after chat joined");
 
             setTimeout(() => {
                 scrollToBottom(false);
             }, 0);
         }
+        if (!isChatbot) {
+            socket.on("receiveMessage", (newMessage) => {
+                if (activeChat && activeChat.id === newMessage.chat.id) {
+                    dispatch(addMessage(newMessage));
+                    dispatch(updateChatMessages(newMessage.chat.id, newMessage));
 
-        socket.on("receiveMessage", (newMessage) => {
-            console.log("New message received:", newMessage);
-            if (activeChat && activeChat.id === newMessage.chat.id) {
-                dispatch(addMessage(newMessage));
-                dispatch(updateChatMessages(newMessage.chat.id, newMessage));
-                
-                if (user?.id) {
-                    socket.emit("markMessagesSeen", {
-                        chatId: activeChat.id,
-                        userId: user.id,
-                    });
+                    if (user?.id) {
+                        socket.emit("markMessagesSeen", {
+                            chatId: activeChat.id,
+                            userId: user.id,
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
 
         socket.on("messagesSeen", (updatedMessages) => {
-            console.log("Messages seen updated:", updatedMessages);
             updatedMessages.forEach((msg: Message) => {
                 dispatch(addMessage(msg));
                 dispatch(updateChatMessages(msg.chat.id, msg));
@@ -99,7 +96,7 @@ const ChatWindow = () => {
             socket.off("typing");
             socket.off("stopTyping");
         };
-    }, [activeChat, activeChat?.id, activeChatUser?.id, dispatch, user?.id]);
+    }, [activeChat, activeChat?.id, activeChatUser?.id, dispatch, user?.id, isChatbot]);
 
     if (!activeChatUser) {
         return null;

@@ -7,6 +7,9 @@ import { socket } from "@/app/utils/socket";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store/store";
 import { getUserChats } from "@/app/store/slices/userSlice";
+import { addMessage } from "@/app/store/slices/chatSlice";
+import ollama from "ollama/browser";
+import { setGeneratingResponse } from "@/app/store/slices/chatSlice";
 
 interface ChatInputProps {
     message: string;
@@ -19,18 +22,20 @@ export const ChatInput = ({ message, setMessage }: ChatInputProps) => {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [isUserTyping, setIsUserTyping] = useState(false);
     const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-    const { activeChat } = useSelector(
+    const { activeChat, activeChatUser, isGeneratingResponse } = useSelector(
         (state: RootState) => state.chat
     );
     const { user } = useSelector((state: RootState) => state.user);
     const dispatch = useDispatch<AppDispatch>();
+
+    const isChatbot = activeChatUser?.id === "chatbot";
 
     const onEmojiClick = (emojiObject: { emoji: string }) => {
         const input = textFieldRef.current?.querySelector("textarea");
         if (!input) return;
 
         const cursorPos = input.selectionStart || 0;
-        const currentValue = input.value; // Get the current value from input
+        const currentValue = input.value;
         const newMessage =
             currentValue.slice(0, cursorPos) +
             emojiObject.emoji +
@@ -38,12 +43,10 @@ export const ChatInput = ({ message, setMessage }: ChatInputProps) => {
 
         setMessage(newMessage);
 
-        // Force immediate cursor position update
         const newCursorPos = cursorPos + emojiObject.emoji.length;
         input.focus();
         input.setSelectionRange(newCursorPos, newCursorPos);
 
-        // Ensure cursor position is maintained after React's state update
         setTimeout(() => {
             input.focus();
             input.setSelectionRange(newCursorPos, newCursorPos);
@@ -56,6 +59,46 @@ export const ChatInput = ({ message, setMessage }: ChatInputProps) => {
 
     const handleSendMessage = async () => {
         if (!message.trim() || !activeChat || !user) return;
+
+        if (isChatbot) {
+            const userMessage = {
+                id: Date.now().toString(),
+                chat: activeChat,
+                sender: user,
+                content: message,
+                seen: true,
+                createdAt: new Date()
+            };
+            
+            dispatch(addMessage(userMessage));
+            setMessage("");
+            setShowEmojiPicker(false);
+            
+            dispatch(setGeneratingResponse(true));
+
+            const messageHistory = activeChat.messages.slice(-10).map((msg) => ({
+                role: msg.sender.id === user.id ? "user" : "assistant",
+                content: msg.content
+            }));
+
+            messageHistory.push({role:"user", content: message});
+            const response = await ollama.chat({
+                model: "llama3.2:1b",
+                messages: messageHistory
+            });
+            dispatch(setGeneratingResponse(false));
+            
+            const aiResponse = {
+                id: (Date.now() + 1).toString(),
+                chat: activeChat,
+                sender: activeChatUser!,
+                content: response.message.content,
+                seen: true,
+                createdAt: new Date()
+            };
+            dispatch(addMessage(aiResponse));
+            return;
+        }
 
         const messageData = {
             chatId: activeChat.id,
@@ -78,7 +121,7 @@ export const ChatInput = ({ message, setMessage }: ChatInputProps) => {
     };
 
     const handleTyping = () => {
-        if (!activeChat || !user) return;
+        if (!activeChat || !user || isChatbot) return;
 
         if (!isUserTyping) {
             setIsUserTyping(true);
@@ -146,7 +189,6 @@ export const ChatInput = ({ message, setMessage }: ChatInputProps) => {
                         const newValue = e.target.value;
                         setMessage(newValue);
                         handleTyping();
-                        // Ensure cursor position is maintained after clearing
                         const input =
                             textFieldRef.current?.querySelector("textarea");
                         if (input) {
@@ -168,6 +210,7 @@ export const ChatInput = ({ message, setMessage }: ChatInputProps) => {
                         }
                     }}
                     ref={textFieldRef}
+                    disabled={isGeneratingResponse}
                     sx={{
                         "& .MuiOutlinedInput-root": {
                             borderRadius: "8px",
@@ -178,6 +221,12 @@ export const ChatInput = ({ message, setMessage }: ChatInputProps) => {
                                 borderWidth: "2px",
                             },
                             fontSize: { xs: "14px", sm: "16px" },
+                            "&.Mui-disabled": {
+                                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                                "& .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: "#1F212F",
+                                },
+                            },
                         },
                         input: { color: "#FFFFFF" },
                     }}
@@ -187,18 +236,18 @@ export const ChatInput = ({ message, setMessage }: ChatInputProps) => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        backgroundColor: "#A07ACD",
+                        backgroundColor: isGeneratingResponse ? "#8B5FBF" : "#A07ACD",
                         width: { xs: "48px", sm: "58px" },
                         height: { xs: "48px", sm: "58px" },
                         borderRadius: "5px",
-                        cursor: "pointer",
+                        cursor: isGeneratingResponse ? "not-allowed" : "pointer",
+                        opacity: isGeneratingResponse ? 0.7 : 1,
                         "&:hover": {
-                            backgroundColor: "#8B5FBF",
-                            transform: "scale(1.05)",
+                            backgroundColor: isGeneratingResponse ? "#8B5FBF" : "#8B5FBF",
                             transition: "all 0.2s ease-in-out",
                         },
                     }}
-                    onClick={handleSendMessage}
+                    onClick={isGeneratingResponse ? undefined : handleSendMessage}
                 >
                     <SendIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
                 </Box>
