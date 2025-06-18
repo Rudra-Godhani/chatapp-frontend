@@ -1,14 +1,14 @@
 import { Box, Typography, Avatar, Badge } from "@mui/material";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-import { User } from "@/app/type/type";
+import { Chat, User } from "@/app/type/type";
 import { formatMessageTimestamp } from "@/app/utils/formatMessageTimestamp";
 import { getInitials } from "@/app/utils/getInitials";
 
 interface ChatListItemProps {
     otherUser: User;
     user: User | null;
-    activeChat: any;
-    userChat: any;
+    activeChat: Chat | null;
+    userChat: Chat | undefined;
     onSelectUser: (user: User) => void;
 }
 
