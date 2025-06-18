@@ -84,7 +84,7 @@ export const ChatInput = ({ message, setMessage }: ChatInputProps) => {
             messageHistory.push({ role: "user", content: message });
             try {
                 const response = await ollama.chat({
-                    model: "llama3.2",
+                    model: "llama3.2:1b",
                     messages: messageHistory
                 });
                 const aiResponse = {
