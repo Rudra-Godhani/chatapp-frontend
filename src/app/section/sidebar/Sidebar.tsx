@@ -31,7 +31,7 @@ const Sidebar = ({ toggleDrawer, isMobile = false }: SidebarProps) => {
     const { users, chats, user } = useSelector(
         (state: RootState) => state.user
     );
-    const { activeChat,isGeneratingResponse } = useSelector((state: RootState) => state.chat);
+    const { activeChat } = useSelector((state: RootState) => state.chat);
 
     const handleOpenModal = () => setOpenModal(true);
     const handleCloseModal = () => setOpenModal(false);
