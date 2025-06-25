@@ -3,6 +3,8 @@ import DoneAllIcon from "@mui/icons-material/DoneAll";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store/store";
 import TypingIndicator from "@/app/components/TypingIndicator";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface ChatMessageProps {
     messagesContainerRef: React.RefObject<HTMLDivElement | null>;
@@ -65,6 +67,7 @@ export const ChatMessage = ({ messagesContainerRef }: ChatMessageProps) => {
                     ) : (
                         <>
                             {activeChat?.messages?.map((msg, index) => {
+                                if (!msg.content) return null;
                                 const timestamp = msg.createdAt;
                                 const date = new Date(timestamp);
                                 const hours = date
@@ -108,9 +111,50 @@ export const ChatMessage = ({ messagesContainerRef }: ChatMessageProps) => {
                                                         sm: "16px",
                                                     },
                                                     wordBreak: "break-word",
+                                                    "& code": {
+                                                        backgroundColor: "#1e1e1e",
+                                                        padding: "2px 4px",
+                                                        borderRadius: "4px",
+                                                        fontSize: "0.9em",
+                                                    },
+                                                    "& pre": {
+                                                        backgroundColor: "#1e1e1e",
+                                                        padding: "12px 16px",
+                                                        borderRadius: "8px",
+                                                        overflow: "auto",
+                                                        margin: "8px 0",
+                                                        '& code': {
+                                                            backgroundColor: "transparent",
+                                                            padding: 0,
+                                                            fontSize: "0.9em",
+                                                            whiteSpace: "pre",
+                                                        }
+                                                    },
+                                                    "& table": {
+                                                        borderCollapse: "collapse",
+                                                        width: "100%",
+                                                    },
+                                                    "& th, & td": {
+                                                        border: "1px solid #ddd",
+                                                        padding: "8px",
+                                                        textAlign: "left",
+                                                    },
+                                                    "& th": {
+                                                        backgroundColor: "#f2f2f2",
+                                                        color: "#333",
+                                                    },
+                                                    "& a": {
+                                                        color: "#A07ACD",
+                                                    },
+                                                    "& p": {
+                                                        margin: isChatbot && msg.sender.username === "Ora Chatbot" ? "15px 0" : "0px",
+                                                    }
                                                 }}
                                             >
-                                                {msg.content}
+                                                {
+                                                    msg.content.length > 0 &&
+                                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                                                }
                                             </Typography>
                                         </Box>
                                         <Box

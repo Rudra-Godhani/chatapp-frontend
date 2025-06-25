@@ -7,7 +7,7 @@ import { socket } from "@/app/utils/socket";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store/store";
 import { getUserChats } from "@/app/store/slices/userSlice";
-import { addMessage } from "@/app/store/slices/chatSlice";
+import { addMessage, updateAIMessage } from "@/app/store/slices/chatSlice";
 import ollama from "ollama/browser";
 import { setGeneratingResponse } from "@/app/store/slices/chatSlice";
 
@@ -82,23 +82,47 @@ export const ChatInput = ({ message, setMessage }: ChatInputProps) => {
             }));
 
             messageHistory.push({ role: "user", content: message });
+            const aiResponsePlaceholderId = (Date.now() + 1).toString();
+
             try {
-                const response = await ollama.chat({
-                    model: "llama3.2:1b",
-                    messages: messageHistory
-                });
-                const aiResponse = {
-                    id: (Date.now() + 1).toString(),
+                const aiResponsePlaceholder = {
+                    id: aiResponsePlaceholderId,
                     chat: activeChat,
                     sender: activeChatUser!,
-                    content: response.message.content,
+                    content: "",
                     seen: true,
-                    createdAt: new Date()
+                    createdAt: new Date(),
                 };
-                dispatch(addMessage(aiResponse));
-            } catch {
+                dispatch(addMessage(aiResponsePlaceholder));
+
+                const response = await ollama.chat({
+                    model: "llama3.2:1b",
+                    messages: messageHistory,
+                    stream: true
+                });
+                
+                let buffer = "";
+                let lastUpdateTime = Date.now();
+                const updateInterval = 100;
+
+                for await (const chunk of response) {
+                    buffer += chunk.message.content;
+                    const now = Date.now();
+                    if (now - lastUpdateTime > updateInterval) {
+                        if (buffer) {
+                            dispatch(updateAIMessage({ content: buffer }));
+                            buffer = "";
+                            lastUpdateTime = now;
+                        }
+                    }
+                }
+                if (buffer) {
+                    dispatch(updateAIMessage({ content: buffer }));
+                }
+            } catch (error) {
+                console.error("Error during AI response streaming:", error);
                 const errorMessage = {
-                    id: (Date.now() + 1).toString(),
+                    id: aiResponsePlaceholderId,
                     chat: activeChat,
                     sender: activeChatUser!,
                     content: "Sorry, I encountered an error. Please try again.",

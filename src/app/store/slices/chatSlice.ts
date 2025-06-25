@@ -67,6 +67,15 @@ const chatSlice = createSlice({
             }
         },
 
+        updateAIMessage: (state, action: PayloadAction<{ content: string }>) => {
+            if (state.activeChat && state.activeChat.messages) {
+                const lastMessage = state.activeChat.messages[state.activeChat.messages.length - 1];
+                if (lastMessage && lastMessage.sender.id === "chatbot") {
+                    lastMessage.content += action.payload.content;
+                }
+            }
+        },
+
         setTyping: (state, action: PayloadAction<boolean>) => {
             state.isTyping = action.payload;
         },
@@ -120,6 +129,7 @@ export const {
     setActiveChatUser,
     setActiveChat,
     addMessage,
+    updateAIMessage,
     setTyping,
     setGeneratingResponse,
     updateActiveChatUserStatus,
