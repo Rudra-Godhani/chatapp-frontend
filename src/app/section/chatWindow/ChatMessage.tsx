@@ -1,10 +1,10 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import { useSelector } from "react-redux";
-import { RootState } from "@/app/store/store";
-import TypingIndicator from "@/app/components/TypingIndicator";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { RootState } from "../../store/store";
+import TypingIndicator from "../../components/TypingIndicator";
 
 interface ChatMessageProps {
     messagesContainerRef: React.RefObject<HTMLDivElement | null>;
